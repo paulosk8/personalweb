@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fundamentos de Programación - Aprende lógica, algoritmos y estructuras de datos de forma interactiva.">
+    <title>Fundamentos de Programación | Paulo Galarza</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/fundamentos.css">
+</head>
+<body class="fundamentals-page">
+
+    <!-- Navegación (Reutilizada de index.html con ajustes para página interna) -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html#hero" class="nav-logo" aria-label="Inicio">PG</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks" role="list">
+                <li><a href="index.html#about">Sobre mí</a></li>
+                <li><a href="index.html#experience">Experiencia</a></li>
+                <li><a href="index.html#skills">Habilidades</a></li>
+                <li><a href="fundamentos.html" class="active">Ejercicios</a></li>
+                <li><a href="index.html#contact">Contacto</a></li>
+                <li class="theme-switch-wrapper">
+                    <button id="theme-toggle" class="btn-theme" title="Cambiar modo">🌓</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="fundamentals-main">
+        <header class="fundamentals-header">
+            <div class="container">
+                <h1 class="neon-text">Fundamentos de Programación</h1>
+                <p class="section-subtitle">Domina las bases con aprendizaje interactivo y gamificado.</p>
+                
+                <!-- Barra de Progreso Global -->
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Progreso General</span>
+                        <span id="global-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="global-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Medallas (Badges) -->
+                <div class="badges-container" id="badges-row">
+                    <div class="badge locked" id="badge-logic" title="Lógica y Algoritmos">🧩</div>
+                    <div class="badge locked" id="badge-data" title="Estructuras de Datos">📊</div>
+                    <div class="badge locked" id="badge-systems" title="Sistemas y Entorno">💻</div>
+                </div>
+
+                <!-- Buscador -->
+                <div class="search-wrapper">
+                    <div class="search-input-group">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="activity-search" placeholder="¿Qué quieres aprender hoy? (Ej: Recursión, Matrices...)" aria-label="Buscar actividad">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="fundamentals-content">
+            <div class="container">
+                <!-- Bloque 1: Lógica y Algoritmos -->
+                <div class="module-block" id="block-1">
+                    <h2 class="block-title cyan-accent">Bloque 1: Lógica y Algoritmos</h2>
+                    <div class="activities-grid">
+                        <!-- Actividad 1.1: Ciclo de Vida -->
+                        <div class="activity-card" id="activity-lifecycle">
+                            <h3>Ciclo de Vida (Resolución)</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Es como construir una casa: no podrías poner las ventanas sin antes tener los planos y los cimientos.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Ordena las fases arrastrándolas para que el Análisis (planos) esté antes que la Codificación (ventanas).</p>
+                            </div>
+                            <div class="activity-area" id="lifecycle-area"></div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>El SDLC (Ciclo de Vida de Desarrollo de Software) asegura calidad mediante etapas secuenciales.</p>
+                            </div>
+                        </div>
+
+                        <!-- Actividad 1.2: Recursividad -->
+                        <div class="activity-card" id="activity-recursion">
+                            <h3>Pila de Llamadas (Recursión)</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Como las Matrioskas rusas: cada muñeca contiene otra igual, hasta llegar a la más pequeña.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Añade llamadas (muñecas). Luego activa el 'Caso Base' para llegar a la más pequeña y retornar los resultados.</p>
+                            </div>
+                            <div class="activity-area" id="recursion-area"></div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>La recursión utiliza el **Stack**. Sin un caso base, ocurre un **Stack Overflow**.</p>
+                            </div>
+                        </div>
+
+                        <!-- Actividad 1.3: Ordenamiento -->
+                        <div class="activity-card" id="activity-sorting">
+                            <h3>Ordenamiento Burbuja</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Imagínate una fila de personas que se intercambian si no están en orden de altura.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Compara a los vecinos usando ↔ e intercámbialos hasta que el número más grande esté a la derecha.</p>
+                            </div>
+                            <div class="activity-area" id="sorting-area"></div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>Algoritmo **O(n²)** que compara y desplaza elementos adyacentes.</p>
+                            </div>
+                        </div>
+
+                        <!-- Actividad 1.4: Estructuras Anidadas -->
+                        <div class="activity-card" id="activity-nested">
+                            <h3>Estructuras Anidadas</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Es como una cebolla: para llegar al centro, debes atravesar todas las capas externas.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Selecciona el cierre `}` correcto para cada bloque: recuerda que la capa más interna se cierra primero.</p>
+                            </div>
+                            <div class="activity-area" id="nested-area">
+                                <div class="nested-editor" id="nested-editor">
+                                    <div class="code-block level-0" id="scope-outer">
+                                        <span class="code-line keyword">if (usuario_autenticado) {</span>
+                                        <div class="code-block level-1" id="scope-inner">
+                                            <span class="code-line keyword">if (tiene_permisos) {</span>
+                                            <span class="code-line indent2 active-code">ejecutar_accion();</span>
+                                            <span class="code-line indent">
+                                                <div class="drop-zone" data-expected="inner" id="zone-inner"><span>...</span></div>
+                                            </span>
+                                        </div>
+                                        <span class="code-line">
+                                            <div class="drop-zone" data-expected="outer" id="zone-outer"><span>...</span></div>
+                                        </span>
+                                    </div>
+                                    <div class="brackets-drawer">
+                                        <div class="drag-bracket" draggable="true" data-id="inner">} // Cierra permisos</div>
+                                        <div class="drag-bracket" draggable="true" data-id="outer">} // Cierra autenticado</div>
+                                    </div>
+                                </div>
+                                <button class="btn-verify" id="verify-nested">Verificar Bloques</button>
+                            </div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>El **Scope** se determina por bloques `{ }`. Los internos se resuelven antes que los contenedores.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bloque 2: Estructuras de Datos -->
+                <div class="module-block" id="block-2">
+                    <h2 class="block-title cyan-accent">Bloque 2: Estructuras de Datos</h2>
+                    <div class="activities-grid">
+                        <!-- Actividad 2.1: Matrices -->
+                        <div class="activity-card" id="activity-matrices">
+                            <h3>Matrices (2D)</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Como un mapa de asientos: cada asiento está en una fila y una columna específica.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Haz clic en la cuadrícula para encontrar el barco. Guíate por las coordenadas [fila][columna].</p>
+                            </div>
+                            <div class="activity-area" id="matrices-area"></div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>Estructuras de datos indexadas por dos ejes. Acceso por **A[i][j]**.</p>
+                            </div>
+                        </div>
+
+                        <!-- Actividad 2.2: Strings -->
+                        <div class="activity-card" id="activity-strings">
+                            <h3>Strings (Concatenación)</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Es como un tren: cada palabra es un vagón y la concatenación es el enganche.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Escribe el "espacio" correctos en el campo central para unir los vagones 'Hola' y 'Mundo'.</p>
+                            </div>
+                            <div class="activity-area" id="strings-area"></div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>Las cadenas son arreglos de caracteres. La concatenación une sus longitudes.</p>
+                            </div>
+                        </div>
+
+                        <!-- Actividad 2.3: TDA -->
+                        <div class="activity-card" id="activity-tda">
+                            <h3>TDA (Abstracción)</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Conducir un auto: giras el volante sin saber exactamente cómo se mueven los ejes.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Pulsa los botones del control. Observa cómo el 'Sistema' reacciona sin que veas su compleja lógica interna.</p>
+                            </div>
+                            <div class="activity-area" id="tda-area">
+                                <div class="tda-simulator">
+                                    <div class="tda-device">
+                                        <div class="device-screen" id="tda-screen">OFF</div>
+                                        <div class="device-controls">
+                                            <button class="ctrl-btn" onclick="opTDA('Power')">⏻</button>
+                                            <button class="ctrl-btn" onclick="opTDA('Mode')">⚙️</button>
+                                            <button class="ctrl-btn" onclick="opTDA('Action')">▶</button>
+                                        </div>
+                                    </div>
+                                    <div class="tda-internals">
+                                        <div class="internal-glow"></div>
+                                        <div class="gears-container" id="tda-gears">
+                                            <span>010101</span>
+                                            <span>110011</span>
+                                        </div>
+                                        <p>Implementación Oculta</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>La Abstracción oculta la **complejidad** y solo expone la **interfaz** necesaria.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bloque 3: Sistemas y Entorno -->
+                <div class="module-block" id="block-3">
+                    <h2 class="block-title cyan-accent">Bloque 3: Sistemas y Entorno</h2>
+                    <div class="activities-grid">
+                        <!-- Actividad 3.1: Compilador vs Intérprete -->
+                        <div class="activity-card" id="activity-compilation">
+                            <h3>Ciclo Biario</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Traducir un libro entero (compilar) vs tener un traductor en vivo (interpretar).</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Primero 'Compila' para traducir el código a binario, luego pulsa 'Ejecutar' para que el CPU lo entienda.</p>
+                            </div>
+                            <div class="activity-area" id="compilation-area"></div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>El compilador genera un binario ejecutable del código fuente completo.</p>
+                            </div>
+                        </div>
+
+                        <!-- Actividad 3.2: Scope -->
+                        <div class="activity-card" id="activity-scope">
+                            <h3>Scope (Ámbito)</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Lo que pasa en Las Vegas, se queda en Las Vegas: algunas variables no existen fuera de casa.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Mueve la variable 'x' de la caja Global a la Función A para ver cómo cambia su visibilidad.</p>
+                            </div>
+                            <div class="activity-area" id="scope-area"></div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>Región del código donde una variable es accesible (**Global vs Local**).</p>
+                            </div>
+                        </div>
+
+                        <!-- Actividad 3.3: Archivos -->
+                        <div class="activity-card" id="activity-files">
+                            <h3>Archivos (Texto vs Binario)</h3>
+                            <div class="card-section analogy">
+                                <span class="badge-mini">Analogía</span>
+                                <p>Las notas de una partitura son el código que los instrumentos convierten en sonido real.</p>
+                            </div>
+                            <div class="card-section instruction">
+                                <span class="badge-mini secondary">Instrucción</span>
+                                <p>Escribe en el 'Editor' y observa cómo el 'Escáner' traduce cada letra a bits en tiempo real.</p>
+                            </div>
+                            <div class="activity-area" id="files-area">
+                                <div class="file-decipherer">
+                                    <div class="pane-editor">
+                                        <label>Editor de Texto</label>
+                                        <textarea id="file-input" maxlength="20" placeholder="Escribe aquí..."></textarea>
+                                    </div>
+                                    <div class="pane-scanner">
+                                        <label>Escáner Binario (Bits)</label>
+                                        <div id="file-content" class="bits-display">...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-section technical">
+                                <span class="badge-mini">Técnico</span>
+                                <p>Todo archivo es binario. El **Texto** es solo una interpretación visual (ASCII/UTF-8).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-container">
+            <p class="footer-text">© 2026 Paulo César Galarza Sánchez · Sección Educativa</p>
+            <a href="index.html" class="btn-back">← Volver al inicio</a>
+        </div>
+    </footer>
+
+    <!-- Contenedor para Feedback (Toasts) -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/main.js"></script>
+    <script src="js/fundamentos.js"></script>
+</body>
+</html>

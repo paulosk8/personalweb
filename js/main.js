@@ -88,3 +88,41 @@ const fadeObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 fadeTargets.forEach(el => fadeObserver.observe(el));
+
+/* ================================================
+   Theme System (Light/Dark)
+   ================================================ */
+function initGlobalTheme() {
+    const root = document.documentElement;
+    const toggles = document.querySelectorAll('#theme-toggle');
+    
+    // Check saved preference
+    const savedTheme = localStorage.getItem('fund-theme');
+    if (savedTheme) {
+        root.setAttribute('data-theme', savedTheme);
+    }
+
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            root.setAttribute('data-theme', newTheme);
+            localStorage.setItem('fund-theme', newTheme);
+            
+            // If showToast exists (in fundamentos page), use it
+            if (typeof showToast === 'function') {
+                showToast(`Modo ${newTheme === 'dark' ? 'oscuro' : 'claro'} activado`, 'info');
+            }
+        });
+    });
+
+    // Listen to system changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('fund-theme')) {
+            root.removeAttribute('data-theme');
+        }
+    });
+}
+
+initGlobalTheme();
