@@ -1,0 +1,4 @@
+/* Ocultar el logo de OJS/PKP del pie de página */
+.pkp_brand_footer {
+    display: none !important;
+}

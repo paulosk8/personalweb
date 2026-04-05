@@ -3,44 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Política de Privacidad | Paulo Galarza</title>
+    <title>Política de Privacidad – Nido: Estimulación Temprana | Paulo Galarza</title>
+    <meta name="description" content="Política de privacidad de Nido: Estimulación Temprana, desarrollada por Paulo César Galarza Sánchez. Conoce cómo tratamos los datos de tu familia.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --text-color: #1f2937;
-            --bg-color: #ffffff;
-            --secondary-bg: #f3f4f6;
+        /* ── Page-specific styles ─────────────────────────── */
+        .privacy-hero {
+            padding: 5rem 0 3rem;
+            border-bottom: 1px solid var(--border);
         }
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: var(--bg-color);
+        .privacy-hero-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
         }
-        h1 { font-size: 2rem; margin-bottom: 2rem; color: #111827; }
-        h2 { font-size: 1.25rem; margin-top: 2rem; margin-bottom: 1rem; color: #111827; }
-        p { margin-bottom: 1rem; }
-        ul { margin-bottom: 1rem; padding-left: 20px; }
-        li { margin-bottom: 0.5rem; }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 2rem;
-            color: var(--primary-color);
-            text-decoration: none;
+        .privacy-app-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 50%, #6366f1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 24px rgba(6,182,212,0.35);
+        }
+        .privacy-app-icon svg { width: 38px; height: 38px; color: #fff; }
+
+        .privacy-hero-text h1 {
+            font-size: clamp(1.5rem, 3vw, 2.1rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+        .privacy-hero-text h1 span { color: var(--accent); }
+        .privacy-hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+        .privacy-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+        }
+        .privacy-badge svg { width: 12px; height: 12px; }
+        .privacy-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Layout ───────────────────────────────────────── */
+        .privacy-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 3rem;
+            padding: 3rem 0 5rem;
+            align-items: start;
+        }
+
+        /* ── Sticky nav sidebar ───────────────────────────── */
+        .privacy-nav {
+            position: sticky;
+            top: 84px;
+        }
+        .privacy-nav-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .privacy-nav ul { list-style: none; display: flex; flex-direction: column; gap: 0.2rem; }
+        .privacy-nav a {
+            display: block;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            padding: 0.4rem 0.65rem;
+            border-radius: var(--radius-sm);
+            transition: all var(--ease);
             font-weight: 500;
+            border-left: 2px solid transparent;
         }
-        .back-link:hover { text-decoration: underline; }
-        footer { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; font-size: 0.875rem; color: #6b7280; }
+        .privacy-nav a:hover {
+            color: var(--text);
+            background: var(--accent-dim);
+            border-left-color: var(--accent);
+            opacity: 1;
+        }
+        .privacy-nav a.active {
+            color: var(--accent);
+            background: var(--accent-dim);
+            border-left-color: var(--accent);
+        }
+
+        /* ── Content area ─────────────────────────────────── */
+        .privacy-content { max-width: 720px; }
+
+        .privacy-intro-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .privacy-intro-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+        .privacy-intro-card strong { color: var(--text); font-weight: 600; }
+
+        /* ── Sections ─────────────────────────────────────── */
+        .privacy-section {
+            margin-bottom: 3rem;
+            scroll-margin-top: 84px;
+        }
+        .privacy-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .privacy-section-num {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .privacy-section h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        /* Sub-blocks */
+        .privacy-block {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .privacy-block-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+        }
+        .privacy-block-title .block-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 0.12rem 0.5rem;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+        .privacy-block p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.75;
+            margin-bottom: 0.75rem;
+        }
+        .privacy-block p:last-child { margin-bottom: 0; }
+
+        /* Lists */
+        .privacy-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            margin-top: 0.5rem;
+        }
+        .privacy-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+        .privacy-list li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            margin-top: 0.55rem;
+        }
+        .privacy-list li strong { color: var(--text); font-weight: 600; }
+
+        /* Note/alert box */
+        .privacy-note {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            background: var(--accent-dim);
+            border: 1px solid rgba(6,182,212,0.25);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem 1.1rem;
+            margin-top: 0.75rem;
+        }
+        .privacy-note svg { width: 18px; height: 18px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+        .privacy-note p {
+            font-size: 0.845rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            margin: 0;
+        }
+        .privacy-note p strong { color: var(--accent); }
+
+        /* Third-party service cards */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .service-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.1rem 1.2rem;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow var(--ease), transform var(--ease);
+        }
+        .service-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .service-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.75rem;
+        }
+        .service-card-icon svg { width: 20px; height: 20px; color: var(--accent); }
+        .service-card-name {
+            font-size: 0.83rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+        .service-card-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* COPPA highlight */
+        .coppa-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .coppa-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.6rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .coppa-item-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .coppa-item-icon svg { width: 22px; height: 22px; color: var(--accent); }
+        .coppa-item p {
+            font-size: 0.815rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        /* Contact card */
+        .contact-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem 1.75rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .contact-row {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+        .contact-row-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .contact-row-icon svg { width: 18px; height: 18px; color: var(--accent); }
+        .contact-row-label {
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.1rem;
+        }
+        .contact-row-value {
+            font-size: 0.895rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .contact-row-value a { color: var(--accent); font-weight: 600; }
+        .contact-row-value a:hover { opacity: 0.8; }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            transition: color var(--ease);
+        }
+        .back-link svg { width: 16px; height: 16px; transition: transform var(--ease); }
+        .back-link:hover { color: var(--accent); opacity: 1; }
+        .back-link:hover svg { transform: translateX(-3px); }
+
+        /* Responsive */
+        @media (max-width: 860px) {
+            .privacy-layout { grid-template-columns: 1fr; }
+            .privacy-nav { position: static; }
+            .services-grid { grid-template-columns: 1fr 1fr; }
+            .coppa-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 540px) {
+            .privacy-hero-inner { flex-direction: column; gap: 1rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .coppa-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <!-- Navegación Consistente -->
+
+    <!-- Navbar -->
     <nav class="navbar" id="navbar">
         <div class="container nav-container">
             <a href="index.html#hero" class="nav-logo" aria-label="Inicio">PG</a>
@@ -63,71 +418,265 @@
         </div>
     </nav>
 
-    <div class="container" style="padding-top: 40px; padding-bottom: 40px;">
-        <a href="index.html" class="back-link">← Volver al sitio principal</a>
-        <h1>Política de Privacidad</h1>
-        <p>Última actualización: 23 de marzo de 2026</p>
+    <!-- Hero Section -->
+    <section class="privacy-hero">
+        <div class="container">
+            <a href="index.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Volver al sitio principal
+            </a>
+            <div class="privacy-hero-inner">
+                <div class="privacy-app-icon">
+                    <!-- Baby/child icon representing early stimulation -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a3 3 0 100 6 3 3 0 000-6z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.5 12.5C7.5 10 9.5 9 12 9s4.5 1 5.5 3.5L19 18H5l1.5-5.5z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 18l.5 3M15 18l-.5 3"/>
+                    </svg>
+                </div>
+                <div class="privacy-hero-text">
+                    <h1>Política de Privacidad<br><span>Nido: Estimulación Temprana</span></h1>
+                    <div class="privacy-hero-meta">
+                        <span class="privacy-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            COPPA Compliant
+                        </span>
+                        <span class="privacy-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0-1.657-1.343-3-3-3S6 9.343 6 11s1.343 3 3 3 3-1.343 3-3zm6 0c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18"/></svg>
+                            Google Play Families
+                        </span>
+                        <span class="privacy-date">Última actualización: 5 de abril de 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        <p>Esta Política de Privacidad describe cómo Paulo César Galarza Sánchez recopila, utiliza y comparte su información personal cuando utiliza nuestras aplicaciones móviles en Google Play Store (las "Aplicaciones").</p>
+    <!-- Main Layout -->
+    <div class="container">
+        <div class="privacy-layout">
 
-        <h2>1. Información que recopilamos</h2>
-        <p>Nuestras aplicaciones están diseñadas para ser respetuosas con su privacidad. Dependiendo de la funcionalidad de la aplicación específica, podemos recopilar:</p>
-        <ul>
-            <li><strong>Información proporcionada por el usuario:</strong> Información que usted introduce directamente (por ejemplo, perfiles, nombres, preferencias).</li>
-            <li><strong>Datos de Uso y Diagnóstico:</strong> Información sobre fallos técnicos (crash reports) y rendimiento para mejorar la estabilidad de la app.</li>
-            <li><strong>Permisos del Dispositivo:</strong> Podemos solicitar acceso a funciones como la cámara, almacenamiento o ubicación, pero solo con su consentimiento explícito y para fines funcionales esenciales.</li>
-        </ul>
+            <!-- Sidebar Navigation -->
+            <aside class="privacy-nav" aria-label="Navegación de política">
+                <p class="privacy-nav-label">Contenido</p>
+                <ul>
+                    <li><a href="#intro">Introducción</a></li>
+                    <li><a href="#s1">1. Datos recopilados</a></li>
+                    <li><a href="#s2">2. Uso y base legal</a></li>
+                    <li><a href="#s3">3. Retención de datos</a></li>
+                    <li><a href="#s4">4. Privacidad y seguridad</a></li>
+                    <li><a href="#s5">5. Derechos y contacto</a></li>
+                </ul>
+            </aside>
 
-        <h2>2. Cómo utilizamos su información</h2>
-        <p>Utilizamos la información recopilada para:</p>
-        <ul>
-            <li>Proporcionar y mantener las funcionalidades de la Aplicación.</li>
-            <li>Mejorar y personalizar la experiencia del usuario.</li>
-            <li>Detectar, prevenir y solucionar problemas técnicos.</li>
-            <li>Cumplir con las políticas de Google Play y las leyes aplicables.</li>
-        </ul>
+            <!-- Content -->
+            <main class="privacy-content" id="privacy-main">
 
-        <h2>3. Servicios de terceros</h2>
-        <p>Nuestras aplicaciones pueden utilizar servicios de terceros que recopilan información utilizada para identificarle o analizar el uso de la app. Estos incluyen:</p>
-        <ul>
-            <li><a href="https://www.google.com/policies/privacy/" target="_blank">Google Play Services</a></li>
-            <li><a href="https://firebase.google.com/support/privacy" target="_blank">Google Analytics para Firebase / Firebase Crashlytics</a></li>
-            <li><a href="https://support.google.com/admob/answer/6128543?hl=es" target="_blank">AdMob (publicidad personalizada)</a></li>
-        </ul>
+                <!-- Intro -->
+                <div class="privacy-intro-card" id="intro">
+                    <p>En <strong>Nido: Estimulación Temprana</strong>, propiedad de <strong>Paulo César Galarza Sánchez</strong>, nos comprometemos a proteger la privacidad de las familias. Esta política detalla de forma exhaustiva qué datos recogemos, cómo los usamos y por cuánto tiempo los conservamos, cumpliendo con las <strong>políticas de datos de usuario de Google Play</strong>.</p>
+                </div>
 
-        <h2>4. Retención de Datos</h2>
-        <p>Conservamos su información personal solo durante el tiempo que sea necesario para cumplir con los fines para los que fue recopilada. Si el usuario elimina su cuenta (si aplica) o solicita la eliminación de sus datos, procederemos conforme a los requisitos de Google Play.</p>
+                <!-- Section 1 -->
+                <section class="privacy-section" id="s1">
+                    <div class="privacy-section-header">
+                        <div class="privacy-section-num">1</div>
+                        <h2>Datos que se recogen y acceden (Lista Exhaustiva)</h2>
+                    </div>
 
-        <h2>5. Seguridad de los datos</h2>
-        <p>Implementamos medidas técnicas y organizativas comercialmente aceptables para proteger su información personal. Sin embargo, recuerde que ningún método de transmisión por Internet es 100% seguro.</p>
+                    <!-- Datos de Cuenta -->
+                    <div class="privacy-block">
+                        <div class="privacy-block-title">
+                            <span class="block-label">A</span>
+                            Datos de Cuenta (vía Google Sign-In)
+                        </div>
+                        <p>Para el acceso y autenticación del usuario, recopilamos mediante Google Sign-In:</p>
+                        <ul class="privacy-list">
+                            <li><strong>Nombre completo.</strong></li>
+                            <li><strong>Dirección de correo electrónico.</strong></li>
+                            <li><strong>ID de usuario</strong> de Google.</li>
+                        </ul>
+                    </div>
 
-        <h2>6. Privacidad Infantil</h2>
-        <p>Nuestras aplicaciones NO recopilan conscientemente información de identificación personal de niños menores de 13 años. Si descubrimos que un niño menor de 13 años nos ha proporcionado información personal, la eliminaremos inmediatamente de nuestros servidores.</p>
+                    <!-- Datos de Desarrollo -->
+                    <div class="privacy-block">
+                        <div class="privacy-block-title">
+                            <span class="block-label">B</span>
+                            Datos de Desarrollo y Salud Infantil
+                        </div>
+                        <p>Para personalizar las actividades de estimulación, el usuario (padre/tutor) proporciona:</p>
+                        <ul class="privacy-list">
+                            <li><strong>Fecha de nacimiento del menor</strong> — para calcular los meses de desarrollo.</li>
+                            <li><strong>Hitos de desarrollo alcanzados</strong> (ej: gateo, agarre, balbuceo).</li>
+                            <li><strong>Progreso y cumplimiento</strong> de rutinas de estimulación.</li>
+                        </ul>
+                    </div>
 
-        <h2>7. Sus Derechos</h2>
-        <p>Usted tiene derecho a acceder, corregir o eliminar su información personal. Puede ejercer estos derechos enviando una solicitud a nuestro correo de contacto.</p>
+                    <!-- Archivos y Multimedia -->
+                    <div class="privacy-block">
+                        <div class="privacy-block-title">
+                            <span class="block-label">C</span>
+                            Archivos y Multimedia
+                        </div>
+                        <p>Si el usuario decide subir una foto de perfil para el menor o el tutor, la app accede a la cámara o galería <strong>solo con permiso explícito</strong>.</p>
+                    </div>
 
-        <h2>8. Cambios a esta Política</h2>
-        <p>Podemos actualizar nuestra Política de Privacidad periódicamente. Se le notificará cualquier cambio publicando la nueva Política de Privacidad en esta página.</p>
+                    <!-- Diagnóstico -->
+                    <div class="privacy-block">
+                        <div class="privacy-block-title">
+                            <span class="block-label">D</span>
+                            Datos de Diagnóstico
+                        </div>
+                        <p>Registros de fallos <em>(Crashlytics)</em> y métricas de rendimiento anónimas para garantizar la estabilidad de la aplicación.</p>
+                    </div>
+                </section>
 
-        <h2>9. Contacto</h2>
-        <p>Si tiene alguna pregunta sobre esta Política de Privacidad, puede contactarnos:</p>
-        <ul>
-            <li>Por correo electrónico: <a href="mailto:paulo-123@hotmail.es">paulo-123@hotmail.es</a></li>
-            <li>Visitando nuestro sitio web: <a href="https://paulogalarza.com">paulogalarza.com</a></li>
-        </ul>
-    </div>
+                <!-- Section 2 -->
+                <section class="privacy-section" id="s2">
+                    <div class="privacy-section-header">
+                        <div class="privacy-section-num">2</div>
+                        <h2>Uso de los Datos y Base Legal</h2>
+                    </div>
+                    <div class="privacy-block">
+                        <p>Utilizamos estos datos <strong>exclusivamente</strong> para:</p>
+                        <ul class="privacy-list">
+                            <li><strong>Funcionalidad principal:</strong> crear un plan de estimulación acorde a la edad y hitos del menor.</li>
+                            <li><strong>Autenticación:</strong> gestionar el acceso seguro mediante Google.</li>
+                            <li><strong>Mejora de la app:</strong> analizar errores técnicos para garantizar la estabilidad.</li>
+                        </ul>
+                        <div class="privacy-note">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            <p><strong>Compromiso:</strong> No vendemos ni compartimos estos datos con terceros para fines publicitarios.</p>
+                        </div>
+                    </div>
+                </section>
 
+                <!-- Section 3 -->
+                <section class="privacy-section" id="s3">
+                    <div class="privacy-section-header">
+                        <div class="privacy-section-num">3</div>
+                        <h2>Política de Conservación de Datos (Retención)</h2>
+                    </div>
+                    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.7;">Cumpliendo con los requisitos de Google Play, informamos los períodos de retención según el estado de la cuenta:</p>
+                    <div class="coppa-grid">
+                        <div class="coppa-item">
+                            <div class="coppa-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                            </div>
+                            <p><strong>Datos Activos</strong><br>Se conservan mientras el usuario mantenga su cuenta activa para el seguimiento histórico del desarrollo.</p>
+                        </div>
+                        <div class="coppa-item">
+                            <div class="coppa-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <p><strong>Inactividad</strong><br>Si la cuenta permanece inactiva más de <strong>24 meses</strong>, los datos personales y de desarrollo se eliminan automáticamente.</p>
+                        </div>
+                        <div class="coppa-item">
+                            <div class="coppa-item-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                            </div>
+                            <p><strong>Eliminación por el usuario</strong><br>Todos los datos se borran de forma <strong>permanente en 7 días hábiles</strong> desde la solicitud.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 4 -->
+                <section class="privacy-section" id="s4">
+                    <div class="privacy-section-header">
+                        <div class="privacy-section-num">4</div>
+                        <h2>Privacidad Infantil y Seguridad</h2>
+                    </div>
+                    <div class="privacy-block">
+                        <div class="privacy-block-title">
+                            <span class="block-label">COPPA / GDPR</span>
+                            Protección de menores
+                        </div>
+                        <p>Esta app está dirigida a <strong>padres</strong> para ser usada con sus hijos. No permitimos el registro directo de menores de 13 años.</p>
+                    </div>
+                    <div class="privacy-block">
+                        <div class="privacy-block-title">
+                            <span class="block-label">SSL</span>
+                            Seguridad de los datos
+                        </div>
+                        <p>Utilizamos <strong>Firebase</strong> con cifrado <strong>SSL</strong> para proteger el tránsito y almacenamiento de toda la información personal y de desarrollo del menor.</p>
+                    </div>
+                </section>
+
+                <!-- Section 5 -->
+                <section class="privacy-section" id="s5">
+                    <div class="privacy-section-header">
+                        <div class="privacy-section-num">5</div>
+                        <h2>Derechos y Contacto</h2>
+                    </div>
+                    <div class="privacy-block">
+                        <p>Usted tiene derecho a <strong>acceder, rectificar o eliminar</strong> sus datos. Para cualquier solicitud o duda sobre el tratamiento de sus datos de salud o personales, contáctenos:</p>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-row">
+                            <div class="contact-row-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                            </div>
+                            <div>
+                                <div class="contact-row-label">Responsable</div>
+                                <div class="contact-row-value">Paulo César Galarza Sánchez</div>
+                            </div>
+                        </div>
+                        <div class="contact-row">
+                            <div class="contact-row-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+                            </div>
+                            <div>
+                                <div class="contact-row-label">Correo electrónico</div>
+                                <div class="contact-row-value"><a href="mailto:paulo-123@hotmail.es">paulo-123@hotmail.es</a></div>
+                            </div>
+                        </div>
+                        <div class="contact-row">
+                            <div class="contact-row-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253M3 12c0 .778.099 1.533.284 2.253"/></svg>
+                            </div>
+                            <div>
+                                <div class="contact-row-label">Web</div>
+                                <div class="contact-row-value"><a href="https://paulogalarza.com" target="_blank" rel="noopener noreferrer">paulogalarza.com</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div><!-- /.privacy-layout -->
+    </div><!-- /.container -->
+
+    <!-- Footer -->
     <footer class="footer">
-        <div class="container footer-container" style="text-align: center; padding: 2rem 0; border-top: 1px solid #e5e7eb;">
-            <p>© 2026 Paulo César Galarza Sánchez · Santo Domingo, Ecuador</p>
-            <p style="font-size: 0.8rem; margin-top: 0.5rem; color: #6b7280;">
-                <a href="fundamentos.html" style="color: inherit; text-decoration: underline;">Ejercicios de Programación</a> &nbsp;·&nbsp; 
-                <a href="index.html" style="color: inherit; text-decoration: underline;">Volver al Inicio</a>
+        <div class="container footer-container">
+            <p class="footer-text">© 2026 Paulo César Galarza Sánchez · Santo Domingo, Ecuador</p>
+            <p class="footer-sub">
+                <a href="fundamentos.html" style="color:inherit;text-decoration:underline;">Ejercicios de Programación</a>
+                &nbsp;·&nbsp;
+                <a href="index.html" style="color:inherit;text-decoration:underline;">Volver al Inicio</a>
             </p>
         </div>
     </footer>
 
     <script src="js/main.js"></script>
+
+    <script>
+        // Highlight active nav item on scroll
+        const sections = document.querySelectorAll('.privacy-section, #intro');
+        const navLinks = document.querySelectorAll('.privacy-nav a');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    const id = entry.target.id;
+                    const activeLink = document.querySelector(`.privacy-nav a[href="#${id}"]`);
+                    if (activeLink) activeLink.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-30% 0px -60% 0px' });
+
+        sections.forEach(s => observer.observe(s));
+    </script>
 </body>
 </html>
