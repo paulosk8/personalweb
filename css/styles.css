@@ -138,6 +138,38 @@ ul { list-style: none; }
 .nav-links a:hover { color: var(--text); background: var(--bg-alt); opacity: 1; }
 .nav-links a.active { color: var(--accent); background: var(--accent-dim); opacity: 1; }
 
+.dropdown {
+  position: relative;
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  min-width: 260px;
+  padding: 0.5rem 0;
+  z-index: 1000;
+}
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+.dropdown-menu li {
+  width: 100%;
+}
+.dropdown-menu a {
+  display: block;
+  padding: 0.7rem 1.2rem;
+  font-size: 0.855rem;
+  border-radius: 0;
+}
+.dropdown-menu a:hover {
+  background: var(--accent-dim);
+}
+
 .theme-switch-wrapper {
   display: flex;
   align-items: center;

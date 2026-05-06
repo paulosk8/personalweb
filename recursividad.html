@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estructura de Datos: Recursividad | Paulo Galarza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .doc-content {
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+    .doc-content h2, .doc-content h3 {
+      color: var(--text);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .doc-content h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+    .doc-content h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .doc-content p {
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+    .doc-content ul, .doc-content ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+    .doc-content li {
+      margin-bottom: 0.5rem;
+    }
+    .doc-content pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+      color: #e2e8f0;
+      font-family: monospace;
+    }
+    .doc-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .doc-content th, .doc-content td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-content th {
+      background: var(--bg-alt);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .doc-content td {
+      font-size: 0.9rem;
+    }
+    .resource-section {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 2px dashed var(--border);
+    }
+    .resource-container {
+      margin-bottom: 3rem;
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .resource-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .resource-title::before {
+      content: '📄';
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== NAVEGACIÓN ===================== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html#hero" class="nav-logo" aria-label="Inicio">PG</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks" role="list">
+        <li><a href="index.html#about">Sobre mí</a></li>
+        <li><a href="index.html#education">Educación</a></li>
+        <li><a href="index.html#experience">Experiencia</a></li>
+        <li><a href="index.html#skills">Habilidades</a></li>
+        <li><a href="index.html#publications">Publicaciones</a></li>
+        <li><a href="index.html#courses">Cursos</a></li>
+        <li class="dropdown">
+          <a href="temas.html" class="active">Temas ▾</a>
+          <ul class="dropdown-menu">
+            <li><a href="recursividad.html">Estructura de Datos: Recursividad</a></li>
+            <!-- Espacio para agregar más temas -->
+          </ul>
+        </li>
+        <li><a href="fundamentos.html">Ejercicios</a></li>
+        <li><a href="index.html#contact">Contacto</a></li>
+        <li class="theme-switch-wrapper">
+          <button id="theme-toggle" class="btn-theme" title="Cambiar modo">🌓</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===================== CONTENIDO ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="doc-content">
+        <h1 class="section-title" style="margin-bottom: 1rem;">Análisis Técnico de la Recursividad: Fundamentos, Tipologías y Aplicaciones</h1>
+        <p class="section-subtitle" style="margin-top: 0; margin-bottom: 2rem;">Tema 1 — Estructura de Datos</p>
+
+        <h3>Resumen Ejecutivo</h3>
+        <p>La recursividad se define como una técnica de programación donde un algoritmo se resuelve mediante llamadas a sí mismo. El análisis del material fuente identifica que la viabilidad de cualquier algoritmo recursivo depende estrictamente de dos componentes: un caso base, que detiene la ejecución, y un caso recursivo, que aproxima el problema hacia dicho estado final.</p>
+        <p>Este documento sintetiza cuatro categorías fundamentales de recursividad: lineal, múltiple, de cola e indirecta. Se destaca la importancia de la gestión de la "Pila de llamadas" (Call Stack) y se subraya que la eficiencia del sistema varía significativamente según el tipo de implementación, siendo la recursividad de cola la más óptima al no dejar operaciones pendientes en la memoria del procesador.</p>
+
+        <h2>1. Principios Fundamentales de la Recursividad</h2>
+        <p>Todo algoritmo recursivo debe adherirse a principios estructurales específicos para garantizar su terminación y correcto funcionamiento. Según los conceptos analizados, la estructura se divide en:</p>
+        <ul>
+          <li><strong>Caso Base:</strong> Es la condición esencial que detiene la recursión. Sin este, el programa entraría en un ciclo infinito. En el ejemplo del factorial, el caso base se alcanza cuando el número evaluado es cero (n = 0), retornando el valor de 1.</li>
+          <li><strong>Caso Recursivo:</strong> Es la instrucción donde la función se llama a sí misma. Este debe estar diseñado de tal manera que cada llamada acerque el problema un paso más hacia el caso base (por ejemplo, utilizando n - 1).</li>
+          <li><strong>Gestión de Memoria:</strong> La ejecución recursiva utiliza una estructura de datos interna conocida como Pila de llamadas (Call Stack), la cual almacena el estado de cada llamada activa hasta que se alcanza el caso base y comienzan a resolverse los retornos.</li>
+        </ul>
+
+        <p><strong>Ejemplo de Aplicación: Factorial Lineal</strong></p>
+        <p>La lógica del factorial ilustra la recursividad lineal simple:</p>
+<pre><code>// Representación lógica del proceso
+return n * factorial(n - 1);</code></pre>
+        <p>En este modelo, el cálculo final queda pendiente hasta que todas las llamadas descendentes se completen.</p>
+
+        <h2>2. Tipologías de la Recursividad</h2>
+        <p>El estudio identifica diversas variantes de recursividad basadas en la forma en que se invocan las funciones y cómo gestionan los recursos del sistema.</p>
+        
+        <h3>A. Recursividad Múltiple</h3>
+        <p>Este tipo ocurre cuando una sola llamada a una función genera múltiples llamadas adicionales, lo que resulta en una ramificación exponencial de la ejecución.</p>
+        <ul>
+          <li><strong>Estructura:</strong> Crea una formación de "árbol" de llamadas.</li>
+          <li><strong>Ejemplo Clásico:</strong> La serie de Fibonacci. En este caso, para calcular un número, la función debe invocar dos veces la recursión: <code>fibonacci(n - 1) + fibonacci(n - 2)</code>.</li>
+        </ul>
+
+        <h3>B. Recursividad de Cola (Tail Recursion)</h3>
+        <p>Se identifica como la variante más eficiente desde el punto de vista del rendimiento y el uso de memoria.</p>
+        <ul>
+          <li><strong>Definición:</strong> Una función utiliza recursividad de cola cuando la llamada recursiva es la última acción que realiza la función.</li>
+          <li><strong>Ventaja Técnica:</strong> No deja operaciones pendientes en la pila de llamadas. Al no haber cálculos posteriores a la llamada (como sumas o multiplicaciones), el sistema puede optimizar el uso del stack.</li>
+          <li><strong>Implementación:</strong> Suele requerir el uso de un acumulador que transporta el resultado parcial a través de las llamadas.</li>
+        </ul>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Característica</th>
+              <th>Recursividad Lineal Estándar</th>
+              <th>Recursividad de Cola</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Operaciones Pendientes</td>
+              <td>Sí (ej. multiplicar por n)</td>
+              <td>No (solo retorna la llamada)</td>
+            </tr>
+            <tr>
+              <td>Uso de Memoria</td>
+              <td>Mayor (acumula marcos en el stack)</td>
+              <td>Menor (optimizable por el compilador)</td>
+            </tr>
+            <tr>
+              <td>Estado</td>
+              <td>El resultado se construye al "regresar"</td>
+              <td>El resultado se construye al "avanzar"</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>C. Recursividad Indirecta</h3>
+        <p>La recursividad indirecta (o mutua) se produce cuando dos o más funciones se llaman entre sí en un ciclo cerrado.</p>
+        <ul>
+          <li><strong>Mecánica:</strong> La Función A llama a la Función B, y la Función B, a su vez, llama a la Función A.</li>
+          <li><strong>Ejemplo de Paridad:</strong>
+            <ul>
+              <li><code>esPar(n)</code> invoca a <code>esImpar(n - 1)</code>.</li>
+              <li><code>esImpar(n)</code> invoca a <code>esPar(n - 1)</code>.</li>
+            </ul>
+          </li>
+          <li><strong>Conclusión del Ciclo:</strong> El proceso continúa alternándose hasta que una de las funciones alcanza su respectivo caso base (en este caso, cuando n llega a 0).</li>
+        </ul>
+
+        <h2>3. Conclusiones del Análisis Técnico</h2>
+        <p>El examen de los programas recursivos analizados permite extraer las siguientes conclusiones críticas:</p>
+        <ol>
+          <li><strong>Visibilidad del Stack:</strong> El uso de herramientas de depuración (breakpoints) es fundamental para comprender cómo las llamadas se apilan y desapilan en la memoria.</li>
+          <li><strong>Eficacia vs. Complejidad:</strong> Mientras que la recursividad múltiple (Fibonacci) es conceptualmente elegante, su estructura de árbol puede ser costosa en términos de procesamiento. En contraste, la recursividad de cola ofrece una alternativa de alto rendimiento para operaciones acumulativas.</li>
+          <li><strong>Lógica de Reducción:</strong> El éxito de la recursividad depende enteramente de la capacidad del programador para reducir sistemáticamente la complejidad del problema original hasta que coincida con el caso base definido.</li>
+        </ol>
+
+
+        <!-- RECURSOS INTERACTIVOS -->
+        <div class="resource-section">
+          <h2 style="border: none; margin-bottom: 2rem;">Recursos de Clase & Prácticas</h2>
+
+          <div class="resource-container">
+            <h4 class="resource-title">Simulador Interactivo de Recursividad</h4>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Visualiza cómo las funciones recursivas se acumulan en la pila de llamadas (Call Stack) en tiempo real.</p>
+            <iframe src="estructura-datos/recursividad/resource/simulador_recursividad.html" width="100%" height="600px" style="border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg);"></iframe>
+          </div>
+
+          <div class="resource-container">
+            <h4 class="resource-title">Infografía Resumen</h4>
+            <img src="estructura-datos/recursividad/resource/Infografia_Recursividad.png" alt="Infografía Recursividad" style="width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border);" loading="lazy" />
+          </div>
+
+          <div class="resource-container">
+            <h4 class="resource-title">Material de Apoyo (Diapositivas)</h4>
+            <embed src="estructura-datos/recursividad/resource/Diapositivas_Recursividad.pdf" type="application/pdf" width="100%" height="600px" style="border-radius: var(--radius-sm); border: 1px solid var(--border);" />
+            <p style="font-size: 0.85rem; margin-top: 0.5rem; text-align: center;"><a href="estructura-datos/recursividad/resource/Diapositivas_Recursividad.pdf" target="_blank" style="text-decoration: underline;">Descargar PDF si no se visualiza correctamente</a></p>
+          </div>
+
+          <div class="resource-container">
+            <h4 class="resource-title">Podcast Recomendado</h4>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Escucha este episodio para profundizar sobre la recursividad y su impacto en la programación.</p>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/7swcCqhpgQe1tGoUwNHKJr?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <p class="footer-text">
+        © 2026 Paulo César Galarza Sánchez &nbsp;·&nbsp; Santo Domingo, Ecuador
+      </p>
+      <p class="footer-sub">
+        Mg. Ing. en Sistemas e Informática &nbsp;·&nbsp; 
+        <a href="fundamentos.html" style="color: inherit; text-decoration: underline;">Ejercicios</a> &nbsp;·&nbsp; 
+        <a href="privacidad.html" style="color: inherit; text-decoration: underline;">Política de Privacidad</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

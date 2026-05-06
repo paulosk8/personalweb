@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador Interactivo de Recursividad C++</title>
+    <style>
+        :root {
+            --bg-main: #1e1e1e;
+            --bg-panel: #252526;
+            --bg-header: #333333;
+            --text-main: #d4d4d4;
+            --text-muted: #858585;
+            --border: #3c3c3c;
+            --highlight-bg: rgba(76, 175, 80, 0.15);
+            --highlight-border: #4caf50;
+            
+            --stack-base: #007acc;
+            --stack-wait: #004a7c;
+            --stack-tail: #4d4d4d;
+            --stack-par: #9c27b0;
+            --stack-impar: #e91e63;
+
+            /* Code Syntax */
+            --kw: #569cd6;    /* keywords */
+            --fn: #dcdcaa;    /* functions */
+            --num: #b5cea8;   /* numbers */
+            --type: #4ec9b0;  /* types */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .scenario-selector select {
+            background-color: var(--bg-main);
+            color: #fff;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* --- Main Layout --- */
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            position: relative;
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        .panel-header {
+            background-color: rgba(0,0,0,0.2);
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* --- Code Panel --- */
+        .code-container {
+            padding: 15px 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 1rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .code-line {
+            display: flex;
+            padding: 2px 15px;
+            border-left: 4px solid transparent;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .code-line.active {
+            background-color: var(--highlight-bg);
+            border-left-color: var(--highlight-border);
+        }
+
+        .line-number {
+            color: var(--text-muted);
+            width: 30px;
+            user-select: none;
+            text-align: right;
+            margin-right: 15px;
+        }
+
+        .kw { color: var(--kw); }
+        .fn { color: var(--fn); }
+        .num { color: var(--num); }
+        .type { color: var(--type); }
+
+        /* --- Call Stack Panel --- */
+        .stack-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stack-frame {
+            width: 80%;
+            background-color: var(--stack-base);
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            /* Animations */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stack-frame.push-anim {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        .stack-frame.pop-anim {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        .stack-frame.waiting {
+            background-color: var(--stack-wait);
+            opacity: 0.8;
+            border: 1px dashed rgba(255,255,255,0.5);
+        }
+
+        .stack-frame.tail-dimmed {
+            background-color: var(--stack-tail);
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .stack-frame.par { background-color: var(--stack-par); }
+        .stack-frame.impar { background-color: var(--stack-impar); }
+
+        .frame-header {
+            font-family: 'Consolas', monospace;
+            font-weight: bold;
+            font-size: 1.05rem;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .frame-status {
+            font-size: 0.75rem;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .frame-vars {
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.2);
+            padding: 6px;
+            border-radius: 4px;
+        }
+
+        /* --- Info & Variables Panel --- */
+        .info-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-box {
+            background-color: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .info-box h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .info-text {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: #fff;
+        }
+
+        .return-value {
+            font-family: 'Consolas', monospace;
+            font-size: 1.5rem;
+            color: var(--highlight-border);
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 6px;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            background-color: var(--bg-panel);
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background-color: #444;
+            border-color: #777;
+        }
+
+        button.primary {
+            background-color: #0e639c;
+            border-color: #1177bb;
+        }
+
+        button.primary:hover { background-color: #1177bb; }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🔬 Visualizador de Recursividad C++</h1>
+        <div class="scenario-selector">
+            <select id="scenario-select" onchange="changeScenario()">
+                <option value="factorial">Escenario 1: Recursividad Lineal (Factorial)</option>
+                <option value="fibonacci">Escenario 2: Recursividad Múltiple (Fibonacci)</option>
+                <option value="tail">Escenario 3: Recursividad de Cola (Suma)</option>
+                <option value="indirect">Escenario 4: Recursividad Indirecta (esPar/esImpar)</option>
+            </select>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Código -->
+        <div class="panel">
+            <div class="panel-header">📝 Código C++</div>
+            <div class="code-container" id="code-container">
+                <!-- Se inyecta dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Call Stack -->
+        <div class="panel" style="background-color: rgba(0,0,0,0.15);">
+            <div class="panel-header">📚 Pila de Llamadas (Call Stack)</div>
+            <div class="stack-container" id="stack-container">
+                <!-- Se inyecta dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Variables & Explicación -->
+        <div class="panel">
+            <div class="panel-header">🔍 Estado y Memoria</div>
+            <div class="info-container">
+                <div class="info-box">
+                    <h3>Paso Actual</h3>
+                    <div class="info-text" id="explanation-text">Selecciona un escenario para comenzar...</div>
+                </div>
+                <div class="info-box">
+                    <h3>Valor Retornado</h3>
+                    <div class="return-value" id="return-value">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="controls">
+        <button onclick="reset()" id="btn-reset">⏹️ Reiniciar</button>
+        <button onclick="stepPrev()" id="btn-prev">⏪ Anterior</button>
+        <button onclick="stepNext()" id="btn-next" class="primary">Paso a Paso 👣</button>
+        <button onclick="togglePlay()" id="btn-play">▶️ Auto Play</button>
+    </div>
+
+    <script>
+        // --- BASE DE DATOS DE ESCENARIOS ---
+        
+        // Formato HTML pre-renderizado del código para preservar colores C++
+        const codeHTML = {
+            factorial: `
+                <div class="code-line"><span class="line-number">1</span><span class="type">int</span> <span class="fn">factorial</span>(<span class="type">int</span> n) {</div>
+                <div class="code-line"><span class="line-number">2</span>  <span class="kw">if</span> (n == <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>;</div>
+                <div class="code-line"><span class="line-number">3</span>  <span class="kw">return</span> n * <span class="fn">factorial</span>(n - <span class="num">1</span>);</div>
+                <div class="code-line"><span class="line-number">4</span>}</div>
+            `,
+            fibonacci: `
+                <div class="code-line"><span class="line-number">1</span><span class="type">int</span> <span class="fn">fibonacci</span>(<span class="type">int</span> n) {</div>
+                <div class="code-line"><span class="line-number">2</span>  <span class="kw">if</span> (n <= <span class="num">1</span>) <span class="kw">return</span> n;</div>
+                <div class="code-line"><span class="line-number">3</span>  <span class="kw">return</span> <span class="fn">fibonacci</span>(n - <span class="num">1</span>) + <span class="fn">fibonacci</span>(n - <span class="num">2</span>);</div>
+                <div class="code-line"><span class="line-number">4</span>}</div>
+            `,
+            tail: `
+                <div class="code-line"><span class="line-number">1</span><span class="type">int</span> <span class="fn">sumaRecursivaCola</span>(<span class="type">int</span> n, <span class="type">int</span> acc = <span class="num">0</span>) {</div>
+                <div class="code-line"><span class="line-number">2</span>  <span class="kw">if</span> (n == <span class="num">0</span>) <span class="kw">return</span> acc;</div>
+                <div class="code-line"><span class="line-number">3</span>  <span class="kw">return</span> <span class="fn">sumaRecursivaCola</span>(n - <span class="num">1</span>, acc + n);</div>
+                <div class="code-line"><span class="line-number">4</span>}</div>
+            `,
+            indirect: `
+                <div class="code-line"><span class="line-number">1</span><span class="type">bool</span> <span class="fn">esPar</span>(<span class="type">int</span> n) {</div>
+                <div class="code-line"><span class="line-number">2</span>  <span class="kw">if</span> (n == <span class="num">0</span>) <span class="kw">return</span> <span class="kw">true</span>;</div>
+                <div class="code-line"><span class="line-number">3</span>  <span class="kw">return</span> <span class="fn">esImpar</span>(n - <span class="num">1</span>);</div>
+                <div class="code-line"><span class="line-number">4</span>}</div>
+                <div class="code-line"><span class="line-number">5</span><span class="type">bool</span> <span class="fn">esImpar</span>(<span class="type">int</span> n) {</div>
+                <div class="code-line"><span class="line-number">6</span>  <span class="kw">if</span> (n == <span class="num">0</span>) <span class="kw">return</span> <span class="kw">false</span>;</div>
+                <div class="code-line"><span class="line-number">7</span>  <span class="kw">return</span> <span class="fn">esPar</span>(n - <span class="num">1</span>);</div>
+                <div class="code-line"><span class="line-number">8</span>}</div>
+            `
+        };
+
+        // Máquina de estados: cada paso define la línea a resaltar, el estado de la pila y el texto.
+        // l: indice de linea (0-based)
+        // s: array de frames de pila. id=unico, f=nombre, v=variables, w=esperando(true/false), t=tail(true/false), c=colorClass
+        // m: mensaje explicativo
+        // ret: valor de retorno mostrado (opcional)
+        const scenariosData = {
+            factorial: [
+                { l: 0, s: [{id: 1, f: 'factorial(3)', v: 'n = 3'}], m: 'Iniciamos la llamada original con n=3.' },
+                { l: 1, s: [{id: 1, f: 'factorial(3)', v: 'n = 3'}], m: 'La condición n == 0 es FALSA.' },
+                { l: 2, s: [{id: 1, f: 'factorial(3)', v: 'n = 3'}], m: 'Se requiere calcular 3 * factorial(2). La función actual se pausa.' },
+                { l: 0, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2'}], m: 'Se apila un nuevo marco para factorial(2).' },
+                { l: 1, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2'}], m: 'La condición n == 0 es FALSA.' },
+                { l: 2, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2'}], m: 'Se requiere calcular 2 * factorial(1).' },
+                { l: 0, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2', w:true}, {id: 3, f: 'factorial(1)', v: 'n = 1'}], m: 'Se apila un nuevo marco para factorial(1).' },
+                { l: 1, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2', w:true}, {id: 3, f: 'factorial(1)', v: 'n = 1'}], m: 'La condición n == 0 es FALSA.' },
+                { l: 2, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2', w:true}, {id: 3, f: 'factorial(1)', v: 'n = 1'}], m: 'Se requiere calcular 1 * factorial(0).' },
+                { l: 0, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2', w:true}, {id: 3, f: 'factorial(1)', v: 'n = 1', w:true}, {id: 4, f: 'factorial(0)', v: 'n = 0'}], m: 'Se apila el marco final para factorial(0).' },
+                { l: 1, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2', w:true}, {id: 3, f: 'factorial(1)', v: 'n = 1', w:true}, {id: 4, f: 'factorial(0)', v: 'n = 0'}], m: '¡CASO BASE ALCANZADO! n == 0 es VERDADERO. Retornamos 1.' },
+                { l: 2, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2', w:true}, {id: 3, f: 'factorial(1)', v: 'n = 1'}], m: 'Desapilamos factorial(0). factorial(1) recibe 1 y calcula: 1 * 1 = 1.', ret: '1' },
+                { l: 2, s: [{id: 1, f: 'factorial(3)', v: 'n = 3', w:true}, {id: 2, f: 'factorial(2)', v: 'n = 2'}], m: 'Desapilamos factorial(1). factorial(2) recibe 1 y calcula: 2 * 1 = 2.', ret: '2' },
+                { l: 2, s: [{id: 1, f: 'factorial(3)', v: 'n = 3'}], m: 'Desapilamos factorial(2). factorial(3) recibe 2 y calcula: 3 * 2 = 6.', ret: '6' },
+                { l: -1, s: [], m: 'Ejecución terminada. La pila está vacía. El resultado final de factorial(3) es 6.', ret: '6' }
+            ],
+            fibonacci: [
+                { l: 0, s: [{id: 1, f: 'fib(3)', v: 'n = 3'}], m: 'Iniciamos fibonacci(3).' },
+                { l: 1, s: [{id: 1, f: 'fib(3)', v: 'n = 3'}], m: 'n <= 1 es FALSO.' },
+                { l: 2, s: [{id: 1, f: 'fib(3)', v: 'n = 3'}], m: 'Llamamos primero a la RAMA IZQUIERDA: fib(2).' },
+                
+                { l: 0, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2'}], m: 'Apilamos fib(2).' },
+                { l: 1, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2'}], m: 'n <= 1 es FALSO.' },
+                { l: 2, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2'}], m: 'Llamamos a la RAMA IZQUIERDA: fib(1).' },
+                
+                { l: 0, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2', w:true}, {id: 3, f: 'fib(1)', v: 'n = 1'}], m: 'Apilamos fib(1).' },
+                { l: 1, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2', w:true}, {id: 3, f: 'fib(1)', v: 'n = 1'}], m: '¡CASO BASE! n <= 1. Retorna 1 directamente.' },
+                
+                { l: 2, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2', w:true}], m: 'La rama izquierda de fib(2) resolvió a 1. Ahora llamamos a la RAMA DERECHA: fib(0).', ret: '1' },
+                
+                { l: 0, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2', w:true}, {id: 4, f: 'fib(0)', v: 'n = 0'}], m: 'Apilamos fib(0).' },
+                { l: 1, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2', w:true}, {id: 4, f: 'fib(0)', v: 'n = 0'}], m: '¡CASO BASE! n <= 1. Retorna 0.' },
+                
+                { l: 2, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 2, f: 'fib(2)', v: 'n = 2'}], m: 'Ambas ramas de fib(2) listas. Sumamos 1 + 0 = 1. Desapilamos.', ret: '0' },
+                
+                { l: 2, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}], m: 'La rama izquierda de fib(3) resolvió a 1. Ahora llamamos a su RAMA DERECHA: fib(1).', ret: '1' },
+                
+                { l: 0, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 5, f: 'fib(1)', v: 'n = 1'}], m: 'Apilamos fib(1).' },
+                { l: 1, s: [{id: 1, f: 'fib(3)', v: 'n = 3', w:true}, {id: 5, f: 'fib(1)', v: 'n = 1'}], m: '¡CASO BASE! Retorna 1.' },
+                
+                { l: 2, s: [{id: 1, f: 'fib(3)', v: 'n = 3'}], m: 'Ambas ramas de fib(3) listas. Sumamos 1 + 1 = 2.', ret: '1' },
+                { l: -1, s: [], m: 'Ejecución terminada. fib(3) devuelve 2.', ret: '2' }
+            ],
+            tail: [
+                { l: 0, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3, acc=0'}], m: 'Iniciamos. El acumulador arranca en 0.' },
+                { l: 1, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3, acc=0'}], m: 'n == 0 es FALSO.' },
+                { l: 2, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3, acc=0'}], m: 'Llamada recursiva. Pasamos n-1 y acumulamos (0+3).' },
+                
+                { l: 0, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3, acc=0', t:true}, {id: 2, f: 'sumaCola(2, 3)', v: 'n=2, acc=3'}], m: 'Nota: Al ser recursividad de cola, el marco anterior se vuelve "inactivo" o se sobrescribe en memoria real.' },
+                { l: 1, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3, acc=0', t:true}, {id: 2, f: 'sumaCola(2, 3)', v: 'n=2, acc=3'}], m: 'n == 0 es FALSO.' },
+                { l: 2, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3, acc=0', t:true}, {id: 2, f: 'sumaCola(2, 3)', v: 'n=2, acc=3'}], m: 'Llamada recursiva. Pasamos n-1 y acumulamos (3+2).' },
+                
+                { l: 0, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3', t:true}, {id: 2, f: 'sumaCola(2, 3)', v: 'acc=3', t:true}, {id: 3, f: 'sumaCola(1, 5)', v: 'n=1, acc=5'}], m: 'Apilamos la siguiente llamada con acumulador en 5.' },
+                { l: 1, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3', t:true}, {id: 2, f: 'sumaCola(2, 3)', v: 'acc=3', t:true}, {id: 3, f: 'sumaCola(1, 5)', v: 'n=1, acc=5'}], m: 'n == 0 es FALSO.' },
+                { l: 2, s: [{id: 1, f: 'sumaCola(3, 0)', v: 'n=3', t:true}, {id: 2, f: 'sumaCola(2, 3)', v: 'acc=3', t:true}, {id: 3, f: 'sumaCola(1, 5)', v: 'n=1, acc=5'}], m: 'Última recursión. Acumulamos (5+1).' },
+                
+                { l: 0, s: [{id: 1, f: 'suma(3)', t:true}, {id: 2, f: 'suma(2)', t:true}, {id: 3, f: 'suma(1)', t:true}, {id: 4, f: 'sumaCola(0, 6)', v: 'n=0, acc=6'}], m: '¡CASO BASE ALCANZADO! El resultado final ya está en "acc".' },
+                { l: 1, s: [{id: 1, f: 'suma(3)', t:true}, {id: 2, f: 'suma(2)', t:true}, {id: 3, f: 'suma(1)', t:true}, {id: 4, f: 'sumaCola(0, 6)', v: 'n=0, acc=6'}], m: 'n == 0. Retornamos el acumulador 6.' },
+                
+                { l: -1, s: [], m: 'El valor burbujea instantáneamente sin requerir cálculos adicionales de vuelta.', ret: '6' }
+            ],
+            indirect: [
+                { l: 0, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par'}], m: 'Llamamos a la primera función: esPar(3).' },
+                { l: 1, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par'}], m: 'n == 0 es FALSO.' },
+                { l: 2, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par'}], m: 'Delega el trabajo saltando a la otra función: esImpar(2).' },
+                
+                { l: 4, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', v: 'n=2', c: 'impar'}], m: 'Cambio de contexto. Apilamos esImpar(2).' },
+                { l: 5, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', v: 'n=2', c: 'impar'}], m: 'n == 0 es FALSO.' },
+                { l: 6, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', v: 'n=2', c: 'impar'}], m: 'Delega de vuelta a la primera función: esPar(1).' },
+                
+                { l: 0, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', v: 'n=2', c: 'impar', w:true}, {id: 3, f: 'esPar(1)', v: 'n=1', c: 'par'}], m: 'Alternamos a esPar(1).' },
+                { l: 1, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', v: 'n=2', c: 'impar', w:true}, {id: 3, f: 'esPar(1)', v: 'n=1', c: 'par'}], m: 'n == 0 es FALSO.' },
+                { l: 2, s: [{id: 1, f: 'esPar(3)', v: 'n=3', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', v: 'n=2', c: 'impar', w:true}, {id: 3, f: 'esPar(1)', v: 'n=1', c: 'par'}], m: 'Delega a esImpar(0).' },
+                
+                { l: 4, s: [{id: 1, f: 'esPar(3)', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', c: 'impar', w:true}, {id: 3, f: 'esPar(1)', c: 'par', w:true}, {id: 4, f: 'esImpar(0)', v: 'n=0', c: 'impar'}], m: 'Última llamada apilada.' },
+                { l: 5, s: [{id: 1, f: 'esPar(3)', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', c: 'impar', w:true}, {id: 3, f: 'esPar(1)', c: 'par', w:true}, {id: 4, f: 'esImpar(0)', v: 'n=0', c: 'impar'}], m: '¡CASO BASE! 0 no es impar. Retorna false.' },
+                
+                { l: 6, s: [{id: 1, f: 'esPar(3)', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', c: 'impar', w:true}, {id: 3, f: 'esPar(1)', c: 'par'}], m: 'Desapilamos. esPar(1) recibe "false" y lo devuelve.', ret: 'false' },
+                { l: 2, s: [{id: 1, f: 'esPar(3)', c: 'par', w:true}, {id: 2, f: 'esImpar(2)', c: 'impar'}], m: 'Desapilamos. esImpar(2) recibe "false" y lo devuelve.', ret: 'false' },
+                { l: 6, s: [{id: 1, f: 'esPar(3)', c: 'par'}], m: 'Desapilamos. esPar(3) recibe "false".', ret: 'false' },
+                { l: -1, s: [], m: 'Finalizado. 3 NO es un número par.', ret: 'false' }
+            ]
+        };
+
+        // --- LÓGICA DE CONTROL ---
+        let currentScenario = 'factorial';
+        let currentStepIdx = 0;
+        let isPlaying = false;
+        let playInterval = null;
+
+        // Elementos DOM
+        const codeContainer = document.getElementById('code-container');
+        const stackContainer = document.getElementById('stack-container');
+        const explanationText = document.getElementById('explanation-text');
+        const returnBox = document.getElementById('return-value');
+        const btnPlay = document.getElementById('btn-play');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+
+        function init() {
+            changeScenario();
+        }
+
+        function changeScenario() {
+            pause();
+            currentScenario = document.getElementById('scenario-select').value;
+            currentStepIdx = 0;
+            
+            // Inyectar código correspondiente
+            codeContainer.innerHTML = codeHTML[currentScenario];
+            
+            // Limpiar visualmente
+            stackContainer.innerHTML = '';
+            returnBox.innerText = '--';
+            
+            renderStep(true);
+        }
+
+        function renderStep(isInitial = false) {
+            const data = scenariosData[currentScenario];
+            const step = data[currentStepIdx];
+
+            // 1. Resaltar Código
+            const lines = codeContainer.querySelectorAll('.code-line');
+            lines.forEach((line, idx) => {
+                if (idx === step.l) {
+                    line.classList.add('active');
+                    // Auto-scroll al código activo
+                    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    line.classList.remove('active');
+                }
+            });
+
+            // 2. Sincronizar Pila de Llamadas (DOM Diffing simple para animaciones)
+            const currentDomIds = Array.from(stackContainer.children).map(el => el.dataset.id);
+            const newStackIds = step.s.map(f => String(f.id));
+
+            // Eliminar los que ya no están (POP)
+            Array.from(stackContainer.children).forEach(el => {
+                if (!newStackIds.includes(el.dataset.id)) {
+                    el.classList.add('pop-anim');
+                    setTimeout(() => el.remove(), 400); // Coincide con la transición CSS
+                }
+            });
+
+            // Añadir o actualizar los nuevos (PUSH)
+            // Recorremos al revés para inyectar arriba usando prepend, simulando un Stack real.
+            [...step.s].reverse().forEach(f => {
+                if (!currentDomIds.includes(String(f.id))) {
+                    // Nuevo elemento
+                    const frame = document.createElement('div');
+                    frame.dataset.id = f.id;
+                    frame.className = `stack-frame push-anim ${f.c ? f.c : ''} ${f.t ? 'tail-dimmed' : ''} ${f.w ? 'waiting' : ''}`;
+                    
+                    let vHtml = f.v ? `<div class="frame-vars">${f.v}</div>` : '';
+                    let status = f.w ? 'PAUSADO' : (f.t ? 'INACTIVO' : 'ACTIVO');
+                    
+                    frame.innerHTML = `
+                        <div class="frame-header">
+                            <span>${f.f}</span>
+                            <span class="frame-status">${status}</span>
+                        </div>
+                        ${vHtml}
+                    `;
+                    
+                    stackContainer.prepend(frame);
+                    
+                    // Trigger animation
+                    requestAnimationFrame(() => {
+                        frame.classList.remove('push-anim');
+                    });
+                } else {
+                    // Actualizar elemento existente
+                    const el = stackContainer.querySelector(`[data-id="${String(f.id)}"]`);
+                    // Solo actualizamos clases de estado (w, t)
+                    el.classList.toggle('waiting', !!f.w);
+                    el.classList.toggle('tail-dimmed', !!f.t);
+                    
+                    let status = f.w ? 'PAUSADO' : (f.t ? 'INACTIVO' : 'ACTIVO');
+                    el.querySelector('.frame-status').innerText = status;
+                }
+            });
+
+            // 3. Actualizar Textos
+            explanationText.innerText = step.m;
+            if (step.ret) {
+                returnBox.innerText = step.ret;
+            } else if (isInitial || step.s.length > 0) {
+                returnBox.innerText = '--';
+            }
+
+            // 4. Actualizar botones
+            btnPrev.disabled = currentStepIdx === 0;
+            btnNext.disabled = currentStepIdx === data.length - 1;
+            
+            if (currentStepIdx === data.length - 1) {
+                pause();
+            }
+        }
+
+        function stepNext() {
+            const data = scenariosData[currentScenario];
+            if (currentStepIdx < data.length - 1) {
+                currentStepIdx++;
+                renderStep();
+            }
+        }
+
+        function stepPrev() {
+            if (currentStepIdx > 0) {
+                currentStepIdx--;
+                // Para simplificar la animación hacia atrás, borramos la pila de golpe y la redibujamos
+                stackContainer.innerHTML = '';
+                renderStep();
+            }
+        }
+
+        function reset() {
+            pause();
+            currentStepIdx = 0;
+            stackContainer.innerHTML = '';
+            renderStep(true);
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                pause();
+            } else {
+                play();
+            }
+        }
+
+        function play() {
+            const data = scenariosData[currentScenario];
+            if (currentStepIdx === data.length - 1) reset(); // Reiniciar si ya terminó
+            
+            isPlaying = true;
+            btnPlay.innerHTML = '⏸️ Pausar';
+            btnPlay.classList.remove('primary');
+            
+            playInterval = setInterval(() => {
+                if (currentStepIdx < data.length - 1) {
+                    stepNext();
+                } else {
+                    pause();
+                }
+            }, 1200); // 1.2s entre cada paso
+        }
+
+        function pause() {
+            isPlaying = false;
+            clearInterval(playInterval);
+            btnPlay.innerHTML = '▶️ Auto Play';
+            btnPlay.classList.add('primary');
+        }
+
+        // Iniciar la aplicación
+        window.onload = init;
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Temas de Programación | Paulo Galarza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ===================== NAVEGACIÓN ===================== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html#hero" class="nav-logo" aria-label="Inicio">PG</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks" role="list">
+        <li><a href="index.html#about">Sobre mí</a></li>
+        <li><a href="index.html#education">Educación</a></li>
+        <li><a href="index.html#experience">Experiencia</a></li>
+        <li><a href="index.html#skills">Habilidades</a></li>
+        <li><a href="index.html#publications">Publicaciones</a></li>
+        <li><a href="index.html#courses">Cursos</a></li>
+        <li class="dropdown">
+          <a href="temas.html" class="active">Temas ▾</a>
+          <ul class="dropdown-menu">
+            <li><a href="recursividad.html">Estructura de Datos: Recursividad</a></li>
+            <!-- Espacio para agregar más temas -->
+          </ul>
+        </li>
+        <li><a href="fundamentos.html">Ejercicios</a></li>
+        <li><a href="index.html#contact">Contacto</a></li>
+        <li class="theme-switch-wrapper">
+          <button id="theme-toggle" class="btn-theme" title="Cambiar modo">🌓</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===================== TEMAS PRINCIPAL ===================== -->
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Temas de Programación</h1>
+      <p class="section-subtitle">Documentación y recursos utilizados en clases.</p>
+      
+      <div class="exp-grid">
+        <!-- Tarjeta de Tema 1 -->
+        <article class="exp-card">
+          <div class="exp-header">
+            <div>
+              <h4 class="exp-title">Estructura de Datos: Recursividad</h4>
+              <p class="exp-org">Material de clase y simuladores</p>
+            </div>
+          </div>
+          <p class="exp-description" style="margin-bottom: 1rem;">
+            Análisis técnico de la recursividad: Fundamentos, tipologías y aplicaciones. Incluye infografías, diapositivas, un simulador interactivo y recomendaciones en formato podcast.
+          </p>
+          <a href="recursividad.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Ver Documentación</a>
+        </article>
+
+        <!-- Espacio para agregar más tarjetas en el futuro -->
+        <article class="exp-card" style="border: 2px dashed var(--border); background: transparent; display: flex; align-items: center; justify-content: center; min-height: 200px;">
+          <div style="text-align: center;">
+            <p style="color: var(--text-muted); font-weight: 500;">Próximamente más temas...</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <p class="footer-text">
+        © 2026 Paulo César Galarza Sánchez &nbsp;·&nbsp; Santo Domingo, Ecuador
+      </p>
+      <p class="footer-sub">
+        Mg. Ing. en Sistemas e Informática &nbsp;·&nbsp; 
+        <a href="fundamentos.html" style="color: inherit; text-decoration: underline;">Ejercicios</a> &nbsp;·&nbsp; 
+        <a href="privacidad.html" style="color: inherit; text-decoration: underline;">Política de Privacidad</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
