@@ -23,26 +23,31 @@ function renderNavbar() {
           <a href="temas.html" id="nav-temas">Temas ▾</a>
           <ul class="dropdown-menu">
             <li class="dropdown dropdown-nested">
-              <a href="estructura-datos.html" id="nav-estructura">Estructura de Datos ▸</a>
+              <a href="javascript:void(0)" id="nav-estructura">Estructura de Datos ▸</a>
               <ul class="dropdown-menu dropdown-submenu">
                 <li><a href="recursividad.html" id="nav-recursividad">Recursividad</a></li>
               </ul>
             </li>
             <li class="dropdown dropdown-nested">
-              <a href="computacion-grafica.html" id="nav-grafica">Computación Gráfica ▸</a>
+              <a href="javascript:void(0)" id="nav-grafica">Computación Gráfica ▸</a>
               <ul class="dropdown-menu dropdown-submenu">
-                <li><a href="computacion-grafica.html" class="sub-link-grafica">Geometría Aplicada</a></li>
+                <li><a href="geometria-aplicada.html" class="sub-link-grafica">Geometría Aplicada</a></li>
               </ul>
             </li>
             <li class="dropdown dropdown-nested">
-              <a href="computacion-paralela.html" id="nav-paralela">Computación Paralela ▸</a>
+              <a href="javascript:void(0)" id="nav-paralela">Computación Paralela ▸</a>
               <ul class="dropdown-menu dropdown-submenu">
-                <li><a href="computacion-paralela.html" class="sub-link-paralela">Algoritmos y Sistemas de Cómputo Paralelo</a></li>
+                <li><a href="algoritmos-paralelos.html" class="sub-link-paralela">Algoritmos y Sistemas de Cómputo Paralelo</a></li>
+              </ul>
+            </li>
+            <li class="dropdown dropdown-nested">
+              <a href="javascript:void(0)" id="nav-distribuidas">Aplicaciones Distribuidas ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="fundamentos-aplicaciones-distribuidas.html" class="sub-link-distribuidas">Fundamentos de Aplicaciones Distribuidas</a></li>
               </ul>
             </li>
           </ul>
         </li>
-        <li><a href="fundamentos.html" id="nav-fundamentos">Ejercicios</a></li>
         <li><a href="index.html#contact">Contacto</a></li>
         <li class="theme-switch-wrapper">
           <button id="theme-toggle" class="btn-theme" title="Cambiar modo">🌓</button>
@@ -64,16 +69,14 @@ function renderNavbar() {
 
   if (path.includes('recursividad.html')) {
     addActive('nav-temas'); addActive('nav-estructura'); addActive('nav-recursividad');
-  } else if (path.includes('estructura-datos.html')) {
-    addActive('nav-temas'); addActive('nav-estructura');
-  } else if (path.includes('computacion-grafica.html')) {
+  } else if (path.includes('geometria-aplicada.html')) {
     addActive('nav-temas'); addActive('nav-grafica'); addActive('.sub-link-grafica');
-  } else if (path.includes('computacion-paralela.html')) {
+  } else if (path.includes('algoritmos-paralelos.html')) {
     addActive('nav-temas'); addActive('nav-paralela'); addActive('.sub-link-paralela');
+  } else if (path.includes('fundamentos-aplicaciones-distribuidas.html')) {
+    addActive('nav-temas'); addActive('nav-distribuidas'); addActive('.sub-link-distribuidas');
   } else if (path.includes('temas.html')) {
     addActive('nav-temas');
-  } else if (path.includes('fundamentos.html')) {
-    addActive('nav-fundamentos');
   }
 }
 

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fundamentos de Aplicaciones Distribuidas | Paulo Galarza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .doc-content {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+    .doc-content h2, .doc-content h3 {
+      color: var(--text);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .doc-content h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+    .doc-content h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .doc-content p {
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+    .doc-content ul, .doc-content ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+    .doc-content li {
+      margin-bottom: 0.5rem;
+    }
+    .doc-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .doc-content th, .doc-content td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .doc-content th {
+      background: var(--bg-alt);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .doc-content td {
+      font-size: 0.9rem;
+    }
+    .resource-section {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 2px dashed var(--border);
+    }
+    .resource-container {
+      margin-bottom: 3rem;
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .resource-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .resource-title::before {
+      content: '📄';
+      font-size: 1.2rem;
+    }
+    .insight-box {
+      background: var(--accent-dim);
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.5rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 1.5rem 0;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== NAVEGACIÓN ===================== -->
+  <div id="navbar-placeholder"></div>
+
+  <!-- ===================== CONTENIDO ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="doc-content">
+        <h1 class="section-title" style="margin-bottom: 1rem;">Guía Maestra de Arquitectura Multicapa: De los Fundamentos a la Modernidad Agéntica</h1>
+        <p class="section-subtitle" style="margin-top: 0; margin-bottom: 2rem;">Tema 1 — Aplicaciones Distribuidas</p>
+
+        <p>Bienvenido, aprendiz. Como Arquitecto de Software, mi misión es enseñarte a diseñar sistemas que no solo funcionen, sino que resistan el paso del tiempo. La arquitectura de software es el "plano" que define cómo se organiza la inteligencia de un sistema. Hoy desglosaremos el patrón de N-Capas, una piedra angular del desarrollo empresarial moderno según los estándares de ingeniería de Codideep.</p>
+
+        <h2>1. Introducción a la Arquitectura en N-Capas</h2>
+        <p>La arquitectura multicapa es un enfoque estructural que divide una aplicación en niveles lógicos independientes. La "N" representa la variabilidad del sistema: dependiendo de la complejidad, un arquitecto puede diseñar soluciones de 3, 4 o más capas para separar responsabilidades. En el desarrollo de aplicaciones empresariales y sitios web complejos, este patrón es fundamental para evitar el "código espagueti" y asegurar que el sistema sea manejable a gran escala.</p>
+        <p>Los 3 objetivos principales de este patrón son:</p>
+        <ul>
+          <li><strong>Mantenibilidad:</strong> Permite aislar errores y realizar cambios en una capa específica sin comprometer la integridad de todo el sistema.</li>
+          <li><strong>Reutilización:</strong> Los componentes, como la lógica de acceso a datos, pueden ser compartidos por múltiples interfaces (web, móvil, APIs) sin reescribir código.</li>
+          <li><strong>Escalabilidad:</strong> Facilita el crecimiento del sistema, permitiendo que cada capa se fortalezca de manera independiente según la demanda.</li>
+        </ul>
+        <div class="insight-box">
+          <strong>Nota del Arquitecto:</strong> Para dominar el diseño de sistemas, debemos entender que cada nivel es una pieza de un rompecabezas que se comunica bajo reglas estrictas.
+        </div>
+
+        <h2>2. Anatomía Funcional: Responsabilidades por Nivel</h2>
+        <p>En una estructura robusta, cada capa tiene límites claros. Según los estándares de Jakarta EE y la ingeniería de software moderna, estas son las funciones vitales:</p>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Capa</th>
+              <th>Responsabilidad Principal</th>
+              <th>Ejemplo Práctico</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Presentación</td>
+              <td>Interfaz de usuario y validaciones de entrada básicas.</td>
+              <td>Páginas web (HTML/JS), aplicaciones móviles o dashboards.</td>
+            </tr>
+            <tr>
+              <td>Lógica de Negocio</td>
+              <td>El "corazón" del sistema. Procesa reglas operacionales, cálculos y flujos de trabajo.</td>
+              <td>Validación de créditos bancarios, cálculo de impuestos o asignación de stock.</td>
+            </tr>
+            <tr>
+              <td>Acceso a Datos (DAL)</td>
+              <td>Gestión de transacciones y conexiones. Define cómo se recupera y guarda la información.</td>
+              <td>Consultas SQL, comandos de repositorio o llamadas a servicios externos.</td>
+            </tr>
+            <tr>
+              <td>Persistencia (Datos)</td>
+              <td>Almacenamiento físico o virtual de la información de forma permanente.</td>
+              <td>Bases de datos relacionales, NoSQL o Cloud Storage (S3, Azure Blobs).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="insight-box">
+          <strong>Insight del Experto:</strong> La Capa de Lógica de Negocio es el centro de gravedad. Para mantener un sistema "sano", aquí es donde aplicamos con mayor rigor los principios SOLID (como el de Responsabilidad Única). Si la lógica está limpia, el sistema es indestructible.
+        </div>
+
+        <h2>3. Balance de Ingeniería: Ventajas vs. Desafíos</h2>
+        <p>Basándonos en los Fundamentos de Aplicaciones Distribuidas, el diseño multicapa no es una "bala de plata"; requiere una evaluación de beneficios frente a costos técnicos.</p>
+        
+        <h3>Fortalezas (Por qué adoptarla)</h3>
+        <ol>
+          <li><strong>Aislamiento de errores:</strong> Un fallo en la base de datos no debería derribar la interfaz de usuario.</li>
+          <li><strong>Escalabilidad horizontal:</strong> Puedes añadir más servidores para procesar lógica pesada sin necesidad de escalar la base de datos simultáneamente.</li>
+          <li><strong>Transparencia de Acceso y Ubicación:</strong> Esta propiedad oculta la complejidad de dónde residen los datos; para la interfaz, no importa si el dato está en un servidor local o en la nube.</li>
+          <li><strong>Independencia Tecnológica:</strong> Puedes cambiar tu base de datos de SQL a NoSQL modificando solo la capa de Persistencia.</li>
+        </ol>
+
+        <h3>Desafíos (Qué vigilar)</h3>
+        <ul>
+          <li><strong>Latencia de Red:</strong> Cada salto entre capas genera un overhead o tráfico de red adicional que puede afectar el rendimiento si no se optimiza.</li>
+          <li><strong>Complejidad Innecesaria:</strong> En proyectos pequeños, el exceso de capas y archivos puede ralentizar el desarrollo sin aportar valor real.</li>
+          <li><strong>Curva de Aprendizaje:</strong> Requiere que los desarrolladores junior comprendan los contratos de comunicación y el flujo de datos ascendente/descendente.</li>
+        </ul>
+
+        <h2>4. La Capa de Seguridad e Identidad (IAM)</h2>
+        <p>En sistemas distribuidos, la seguridad es una capa transversal crítica. Según fuentes como Logto y Auth0, la gestión de identidades (IAM) resuelve dos procesos distintos:</p>
+        <ul>
+          <li><strong>Autenticación:</strong> ¿Eres quien dices ser? (Verificación de identidad).</li>
+          <li><strong>Autorización:</strong> ¿Qué tienes permitido hacer? (Control de acceso basado en roles).</li>
+        </ul>
+
+        <h3>Glosario de Protocolos y Estándares</h3>
+        <ul>
+          <li><strong>JWT (JSON Web Token):</strong> Esencial para la escalabilidad moderna. Al ser stateless (sin estado), el servidor no necesita consultar una base de datos de sesiones en cada petición, lo que permite una escalabilidad horizontal infinita.</li>
+          <li><strong>OpenID Connect (OIDC):</strong> El estándar para aplicaciones modernas y móviles. Utiliza JSON y es más ligero. Permite el flujo de "Iniciar sesión con Google".</li>
+          <li><strong>SAML:</strong> Protocolo basado en XML. Es el estándar para sistemas corporativos "Legacy" o entornos gubernamentales que requieren alta formalidad.</li>
+          <li><strong>OAuth 2.0:</strong> El marco de trabajo para la autorización delegada (dar permiso a una app para acceder a recursos de otra).</li>
+        </ul>
+
+        <h3>Flujo OIDC: "Iniciar sesión con Google"</h3>
+        <ol>
+          <li><strong>Redirección:</strong> El usuario es enviado al servidor de Google.</li>
+          <li><strong>Autenticación:</strong> El usuario ingresa sus credenciales en el sitio seguro de Google.</li>
+          <li><strong>Consentimiento:</strong> El usuario autoriza que la aplicación acceda a su perfil.</li>
+          <li><strong>Entrega del ID Token:</strong> Google devuelve un ID Token a la aplicación. Este token permite verificar la identidad del usuario sin realizar peticiones adicionales al servidor de identidad.</li>
+        </ol>
+
+        <h2>5. Evolución del Ecosistema Arquitectónico</h2>
+        <p>Desde el Monolito hasta los modernos Agentes de IA, la arquitectura ha evolucionado hacia un mayor desacoplamiento.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Modelo</th>
+              <th>Estructura Lógica</th>
+              <th>Ventaja Clave</th>
+              <th>Limitación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monolítico</td>
+              <td>Código único e indivisible.</td>
+              <td>Simplicidad de despliegue inicial.</td>
+              <td>Rigidez y difícil escalado.</td>
+            </tr>
+            <tr>
+              <td>Cliente-Servidor</td>
+              <td>División en dos roles claros.</td>
+              <td>Seguridad centralizada.</td>
+              <td>Cuellos de botella en el servidor.</td>
+            </tr>
+            <tr>
+              <td>N-Capas</td>
+              <td>Descomposición en niveles.</td>
+              <td>Modularidad y mantenimiento.</td>
+              <td>Latencia por saltos entre capas.</td>
+            </tr>
+            <tr>
+              <td>Microservicios</td>
+              <td>Unidades autónomas por API.</td>
+              <td>Agilidad y despliegue continuo.</td>
+              <td>Alta complejidad operativa.</td>
+            </tr>
+            <tr>
+              <td>Agentes de IA</td>
+              <td>Núcleo + Capa de razonamiento.</td>
+              <td>Adaptabilidad dinámica.</td>
+              <td>Costos de inferencia y tokens.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="insight-box">
+          <strong>Insight del Experto:</strong> Los Agentes de IA representan un nuevo modelo híbrido. Utilizan marcos como Semantic Kernel y técnicas de compilación AOT (Ahead-of-Time) para igualar el rendimiento de los microservicios tradicionales, pero añadiendo una capa de "razonamiento" capaz de resolver excepciones que la lógica compilada tradicional no podría prever.
+        </div>
+
+        <h2>6. Conclusión: El Camino hacia Sistemas Robustos</h2>
+        <p>Para construir software preparado para el futuro, debemos apoyarnos en estándares globales. Jakarta EE, por ejemplo, ha simplificado la arquitectura mediante el uso de anotaciones, eliminando el pesado código XML del pasado.</p>
+
+        <h3>Consejos del Experto</h3>
+        <ul>
+          <li><strong>Abstracción:</strong> Usa interfaces para separar capas. No permitas que la Capa de Presentación sepa qué motor de base de datos estás usando.</li>
+          <li><strong>Seguridad por Diseño:</strong> Implementa OIDC y JWT desde el inicio. La seguridad añadida "al final" siempre deja brechas.</li>
+          <li><strong>Adaptabilidad:</strong> Utiliza REST para tus APIs públicas y web (HTTP/1.1), pero considera gRPC (HTTP/2) para la comunicación interna de alto rendimiento entre capas o microservicios.</li>
+        </ul>
+        <p>La arquitectura de software es una disciplina de aprendizaje continuo. Tu capacidad para elegir el patrón correcto definirá la robustez de los sistemas que construyas. ¡Sigue diseñando con propósito!</p>
+
+        <!-- RECURSOS INTERACTIVOS -->
+        <div class="resource-section">
+          <h2 style="border: none; margin-bottom: 2rem;">Recursos de Clase & Prácticas</h2>
+
+          <div class="resource-container">
+            <h4 class="resource-title" style="margin-bottom: 1.5rem;"><span style="font-size: 1.4rem;">🖼️</span> Infografía Resumen</h4>
+            <img src="aplicaciones-distribuidas/Arquitectura_de_Software Moderna.png" alt="Arquitectura de Software Moderna" style="width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border);" loading="lazy" />
+          </div>
+
+          <div class="resource-container">
+            <h4 class="resource-title" style="margin-bottom: 1.5rem;">Material de Apoyo (Diapositivas)</h4>
+            <embed src="aplicaciones-distribuidas/Distributed_Systems_Topography.pdf" type="application/pdf" width="100%" height="600px" style="border-radius: var(--radius-sm); border: 1px solid var(--border);" />
+            <p style="font-size: 0.85rem; margin-top: 0.5rem; text-align: center;"><a href="aplicaciones-distribuidas/Distributed_Systems_Topography.pdf" target="_blank" style="text-decoration: underline;">Descargar PDF si no se visualiza correctamente</a></p>
+          </div>
+
+          <div class="resource-container" style="border-color: #1DB954;">
+            <h4 class="resource-title" style="margin-bottom: 1.5rem; color: #1DB954;"><span style="font-size: 1.4rem;">🎧</span> Podcast Recomendado</h4>
+            <p style="font-size: 0.95rem; margin-bottom: 1rem;">Escucha este episodio para profundizar sobre arquitecturas distribuidas, la evolución hacia los microservicios y el rol de los sistemas en la ingeniería moderna.</p>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/2JzYn2aXfwT6zmOyHSOdne?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <p class="footer-text">
+        © 2026 Paulo César Galarza Sánchez &nbsp;·&nbsp; Santo Domingo, Ecuador
+      </p>
+      <p class="footer-sub">
+        Mg. Ing. en Sistemas e Informática &nbsp;·&nbsp; 
+        <a href="privacidad.html" style="color: inherit; text-decoration: underline;">Política de Privacidad</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
