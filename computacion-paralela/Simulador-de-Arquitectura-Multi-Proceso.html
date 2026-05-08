@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulador: Arquitectura Multi-proceso (Chrome)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @keyframes thread-pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+      }
+      .thread-dot {
+        animation: thread-pulse 1.5s infinite;
+      }
+      .memory-box {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .crashed-overlay {
+        background: rgba(239, 68, 68, 0.1);
+        backdrop-filter: blur(2px);
+      }
+      .tab-transition {
+        transition:
+          background-color 0.3s,
+          border-color 0.3s;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+      <!-- Título y Encabezado -->
+      <header class="mb-6 text-center">
+        <h1 class="text-3xl font-black text-slate-900 mb-2">
+          Simulador de Arquitectura Multi-Proceso
+        </h1>
+        <p class="text-slate-600">
+          Basado en el modelo de aislamiento de Google Chrome
+        </p>
+      </header>
+
+      <!-- Interfaz del Navegador Ficticio -->
+      <div
+        class="bg-white rounded-t-2xl shadow-2xl border border-slate-300 overflow-hidden"
+      >
+        <!-- Barra de Pestañas -->
+        <div
+          class="bg-slate-200 p-2 flex items-center gap-1 overflow-x-auto border-b border-slate-300"
+          id="tabBar"
+        >
+          <!-- Las pestañas se generan dinámicamente -->
+          <button
+            onclick="addNewTab()"
+            class="px-4 py-1 bg-slate-300 hover:bg-slate-400 rounded-lg text-lg font-bold transition"
+          >
+            +
+          </button>
+        </div>
+
+        <!-- Barra de Direcciones -->
+        <div
+          class="bg-white p-2 flex items-center gap-3 border-b border-slate-200"
+        >
+          <div class="flex gap-2 ml-2">
+            <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+            <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+          </div>
+          <div
+            id="addressBar"
+            class="flex-grow bg-slate-100 rounded-full px-4 py-1 text-sm text-slate-500 font-mono italic"
+          >
+            Cargando proceso...
+          </div>
+          <button
+            onclick="crashActiveTab()"
+            class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full transition shadow-sm"
+          >
+            Simular Fallo Crítico
+          </button>
+        </div>
+
+        <!-- Área de Contenido del Navegador -->
+        <div
+          class="h-64 flex items-center justify-center bg-slate-50 relative"
+          id="browserView"
+        >
+          <div id="activeContent" class="text-center p-8">
+            <!-- Contenido dinámico aquí -->
+          </div>
+          <div
+            id="crashOverlay"
+            class="absolute inset-0 crashed-overlay hidden flex flex-col items-center justify-center text-red-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-16 w-16 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.876c1.27 0 2.09-1.383 1.458-2.43L13.731 4c-.633-1.077-2.176-1.077-2.809 0L4.252 16.57a1.5 1.5 0 001.458 2.43z"
+              />
+            </svg>
+            <h2 class="text-2xl font-black">¡Oh, no!</h2>
+            <p class="font-medium text-slate-600 mt-2">
+              Este proceso ha colapsado.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISUALIZACIÓN TÉCNICA (DEBAJO DEL CAPÓ) -->
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Columna 1: Panel de Control del Sistema -->
+        <div class="bg-slate-800 text-white p-6 rounded-2xl shadow-xl h-fit">
+          <h3
+            class="text-xs font-black text-blue-400 uppercase tracking-widest mb-4"
+          >
+            Monitor del Sistema
+          </h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-400">Procesos Totales:</span>
+              <span
+                id="totalProcessesCount"
+                class="font-mono font-bold text-lg text-white"
+                >0</span
+              >
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-slate-400">Aislamiento de Memoria:</span>
+              <span
+                class="bg-green-500/20 text-green-400 text-[10px] px-2 py-0.5 rounded font-bold"
+                >ACTIVO</span
+              >
+            </div>
+            <p
+              class="text-[11px] text-slate-400 border-t border-slate-700 pt-4 leading-relaxed italic"
+            >
+              "En Chrome, cada pestaña es un proceso separado. Si la Pestaña A
+              tiene un error de memoria, el Sistema Operativo mata su proceso
+              sin afectar a los demás."
+            </p>
+          </div>
+        </div>
+
+        <!-- Columna 2 y 3: Visualización de Memoria y Hilos -->
+        <div
+          class="md:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-slate-200"
+        >
+          <h3
+            class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6"
+          >
+            Visualización de Procesos y Threads
+          </h3>
+
+          <div id="processContainer" class="flex flex-wrap gap-6 items-start">
+            <!-- Los bloques de memoria de cada proceso se generan aquí -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Explicación Didáctica -->
+      <div
+        class="mt-8 bg-blue-600 text-white p-6 rounded-2xl flex items-start gap-4 shadow-lg shadow-blue-200"
+      >
+        <div class="bg-white/20 p-3 rounded-xl">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h4 class="font-bold mb-1">¿Qué estamos viendo?</h4>
+          <p class="text-sm text-blue-100 leading-relaxed">
+            Cada recuadro blanco representa un <b>Proceso</b> (un espacio de
+            memoria aislado). Dentro de cada proceso, verás pequeños círculos de
+            colores: esos son los <b>Hilos (Threads)</b>. Los hilos comparten la
+            memoria dentro de su propio proceso para ser rápidos, pero no pueden
+            acceder a la memoria de otro proceso por seguridad.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let tabs = [];
+      let activeTabId = null;
+      let tabCounter = 0;
+
+      function addNewTab() {
+        tabCounter++;
+        const newTab = {
+          id: Date.now(),
+          name: `Pestaña ${tabCounter}`,
+          url: `www.clase-concurrencia.com/tema_${tabCounter}`,
+          status: "alive", // 'alive' or 'crashed'
+          threads: [
+            { name: "UI", color: "bg-blue-400" },
+            { name: "Render", color: "bg-emerald-400" },
+            { name: "Net", color: "bg-amber-400" },
+          ],
+        };
+        tabs.push(newTab);
+        activeTabId = newTab.id;
+        updateUI();
+      }
+
+      function switchTab(id) {
+        activeTabId = id;
+        updateUI();
+      }
+
+      function crashActiveTab() {
+        if (!activeTabId) return;
+        const tab = tabs.find((t) => t.id === activeTabId);
+        if (tab) tab.status = "crashed";
+        updateUI();
+      }
+
+      function updateUI() {
+        const tabBar = document.getElementById("tabBar");
+        const processContainer = document.getElementById("processContainer");
+        const browserView = document.getElementById("activeContent");
+        const crashOverlay = document.getElementById("crashOverlay");
+        const addressBar = document.getElementById("addressBar");
+        const totalCount = document.getElementById("totalProcessesCount");
+
+        // Actualizar Contador
+        totalCount.innerText = tabs.filter((t) => t.status === "alive").length;
+
+        // Limpiar y Redibujar Pestañas
+        tabBar.innerHTML = "";
+        tabs.forEach((tab) => {
+          const btn = document.createElement("button");
+          btn.className = `px-4 py-1.5 rounded-t-lg text-sm font-semibold tab-transition mr-1 flex items-center gap-2 ${tab.id === activeTabId ? "bg-white text-slate-900 border-x border-t border-slate-300" : "bg-slate-300 text-slate-600 hover:bg-slate-350"}`;
+          btn.onclick = () => switchTab(tab.id);
+          btn.innerHTML = `${tab.name} ${tab.status === "crashed" ? "⚠️" : ""}`;
+          tabBar.appendChild(btn);
+        });
+        const addBtn = document.createElement("button");
+        addBtn.className =
+          "px-3 py-1 bg-slate-300 hover:bg-slate-400 rounded-lg text-lg font-bold transition mb-1";
+        addBtn.onclick = addNewTab;
+        addBtn.innerText = "+";
+        tabBar.appendChild(addBtn);
+
+        // Actualizar Vista del Navegador
+        const activeTab = tabs.find((t) => t.id === activeTabId);
+        if (activeTab) {
+          addressBar.innerText = activeTab.url;
+          if (activeTab.status === "crashed") {
+            crashOverlay.classList.remove("hidden");
+            browserView.innerHTML = "";
+          } else {
+            crashOverlay.classList.add("hidden");
+            browserView.innerHTML = `
+                        <h2 class="text-3xl font-bold text-slate-800">Contenido de la ${activeTab.name}</h2>
+                        <p class="text-slate-500 mt-2 italic">Procesando hilos de renderizado en tiempo real...</p>
+                        <div class="mt-4 flex justify-center gap-4">
+                            <div class="h-2 w-24 bg-slate-200 rounded animate-pulse"></div>
+                            <div class="h-2 w-24 bg-slate-200 rounded animate-pulse delay-75"></div>
+                        </div>
+                    `;
+          }
+        } else {
+          addressBar.innerText = "Nueva pestaña";
+          browserView.innerHTML =
+            "<p class='text-slate-400 italic font-medium'>Añade una pestaña para iniciar un proceso...</p>";
+          crashOverlay.classList.add("hidden");
+        }
+
+        // Actualizar Visualización de Memoria (Bajo el Capó)
+        processContainer.innerHTML = "";
+        tabs.forEach((tab) => {
+          const box = document.createElement("div");
+          box.className = `memory-box w-40 h-40 p-3 rounded-2xl border-2 shadow-sm flex flex-col relative ${tab.status === "crashed" ? "bg-red-50 border-red-200 opacity-50" : "bg-white border-slate-200"} ${tab.id === activeTabId ? "ring-4 ring-blue-100 scale-105 z-20" : "z-10"}`;
+
+          box.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[9px] font-black uppercase text-slate-400">PID: ${String(tab.id).slice(-4)}</span>
+                        <div class="w-2 h-2 rounded-full ${tab.status === "alive" ? "bg-green-500" : "bg-red-500"}"></div>
+                    </div>
+                    <div class="text-[10px] font-bold text-slate-700 truncate mb-4">${tab.name}</div>
+                    
+                    <div class="flex flex-wrap gap-2 justify-center mt-auto">
+                        ${
+                          tab.status === "alive"
+                            ? tab.threads
+                                .map(
+                                  (th) => `
+                            <div class="flex flex-col items-center">
+                                <div class="thread-dot w-4 h-4 rounded-full ${th.color} shadow-sm"></div>
+                                <span class="text-[8px] mt-1 text-slate-500 font-bold uppercase">${th.name}</span>
+                            </div>
+                        `,
+                                )
+                                .join("")
+                            : '<div class="text-[10px] text-red-400 font-bold uppercase mt-4">Proceso Muerto</div>'
+                        }
+                    </div>
+                    
+                    ${tab.status === "crashed" ? '<div class="absolute inset-0 flex items-center justify-center text-4xl">❌</div>' : ""}
+                `;
+          processContainer.appendChild(box);
+        });
+      }
+
+      // Inicializar con una pestaña
+      window.onload = addNewTab;
+    </script>
+  </body>
+</html>

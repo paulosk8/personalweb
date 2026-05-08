@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulador: Regiones Críticas Condicionales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .buffer-slot {
+        transition: all 0.3s ease;
+      }
+      .item-enter {
+        animation: slideIn 0.5s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .waiting {
+        animation: pulse-amber 1.5s infinite;
+      }
+      @keyframes pulse-amber {
+        0%,
+        100% {
+          background-color: #f59e0b;
+        }
+        50% {
+          background-color: #fef3c7;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 p-4 font-sans text-slate-800">
+    <div
+      class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-xl border border-slate-200"
+    >
+      <div class="flex items-center justify-between mb-6 border-b pb-4">
+        <div>
+          <h1 class="text-2xl font-black text-slate-900 tracking-tight">
+            Simulador: Regiones Críticas Condicionales
+          </h1>
+          <p class="text-xs text-slate-500 font-bold uppercase">
+            Problema del Productor-Consumidor (Concepto de Hoare)
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="text-[10px] font-bold text-slate-400 block"
+            >ESTADO DEL BUFFER</span
+          >
+          <span id="bufferStatus" class="text-sm font-black text-blue-600"
+            >0 / 5 (Vacío)</span
+          >
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Controles Izquierda -->
+        <div class="space-y-4">
+          <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+            <h2
+              class="font-bold text-sm text-indigo-800 mb-3 flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 100-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"
+                />
+              </svg>
+              Productores (Generan Datos)
+            </h2>
+            <button
+              onclick="startProducer()"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg text-xs shadow-md transition-all active:scale-95"
+            >
+              Lanzar Productor
+            </button>
+            <div id="prodList" class="mt-2 space-y-1"></div>
+          </div>
+
+          <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+            <h2
+              class="font-bold text-sm text-emerald-800 mb-3 flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Consumidores (Procesan Datos)
+            </h2>
+            <button
+              onclick="startConsumer()"
+              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs shadow-md transition-all active:scale-95"
+            >
+              Lanzar Consumidor
+            </button>
+            <div id="consList" class="mt-2 space-y-1"></div>
+          </div>
+        </div>
+
+        <!-- Centro: Buffer Compartido -->
+        <div
+          class="lg:col-span-2 flex flex-col justify-center items-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 p-8"
+        >
+          <h2
+            class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6"
+          >
+            Región Crítica: Buffer de Memoria (N=5)
+          </h2>
+
+          <div class="flex gap-4" id="bufferDisplay">
+            <!-- Slots del buffer -->
+            <div
+              class="buffer-slot w-16 h-16 bg-white border-2 border-slate-300 rounded-xl flex items-center justify-center shadow-inner"
+            ></div>
+            <div
+              class="buffer-slot w-16 h-16 bg-white border-2 border-slate-300 rounded-xl flex items-center justify-center shadow-inner"
+            ></div>
+            <div
+              class="buffer-slot w-16 h-16 bg-white border-2 border-slate-300 rounded-xl flex items-center justify-center shadow-inner"
+            ></div>
+            <div
+              class="buffer-slot w-16 h-16 bg-white border-2 border-slate-300 rounded-xl flex items-center justify-center shadow-inner"
+            ></div>
+            <div
+              class="buffer-slot w-16 h-16 bg-white border-2 border-slate-300 rounded-xl flex items-center justify-center shadow-inner"
+            ></div>
+          </div>
+
+          <div class="mt-12 grid grid-cols-2 gap-8 w-full max-w-md text-center">
+            <div
+              class="p-3 bg-white rounded-lg shadow-sm border border-slate-200"
+            >
+              <p class="text-[10px] font-bold text-slate-400 uppercase">
+                Condición Productor
+              </p>
+              <p class="text-xs font-bold" id="condProd">
+                count < 5 <span class="text-green-500">✔</span>
+              </p>
+            </div>
+            <div
+              class="p-3 bg-white rounded-lg shadow-sm border border-slate-200"
+            >
+              <p class="text-[10px] font-bold text-slate-400 uppercase">
+                Condición Consumidor
+              </p>
+              <p class="text-xs font-bold" id="condCons">
+                count > 0 <span class="text-red-500">✘</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logs y Feedback -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div
+          class="bg-slate-900 text-blue-300 p-4 rounded-xl font-mono text-[10px] h-40 overflow-y-auto"
+          id="log"
+        >
+          <div>> Monitor inicializado...</div>
+          <div>> Región crítica condicional lista.</div>
+        </div>
+        <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
+          <h3 class="text-sm font-bold text-amber-800 mb-2">
+            Explicación Técnica:
+          </h3>
+          <p id="feedbackText" class="text-xs text-amber-900 leading-relaxed">
+            Usa los botones para lanzar hilos. Si el buffer está lleno, los
+            productores entrarán en <b>Espera Condicional</b>. Si está vacío,
+            los consumidores esperarán hasta que se produzca un ítem.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let buffer = [];
+      const MAX_BUFFER = 5;
+      let prodCount = 0;
+      let consCount = 0;
+
+      function addLog(msg, type = "info") {
+        const log = document.getElementById("log");
+        const color =
+          type === "warn"
+            ? "text-amber-400"
+            : type === "success"
+              ? "text-green-400"
+              : "text-blue-300";
+        log.innerHTML += `<div class="${color}">> ${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
+      }
+
+      function updateDisplay() {
+        const slots = document.querySelectorAll(".buffer-slot");
+        slots.forEach((slot, i) => {
+          if (buffer[i]) {
+            slot.innerHTML = `<div class="w-12 h-12 bg-indigo-500 rounded-lg shadow-md flex items-center justify-center text-white font-bold item-enter">${buffer[i]}</div>`;
+            slot.classList.add("border-indigo-200");
+          } else {
+            slot.innerHTML = "";
+            slot.classList.remove("border-indigo-200");
+          }
+        });
+
+        document.getElementById("bufferStatus").innerText =
+          `${buffer.length} / ${MAX_BUFFER} (${buffer.length === 0 ? "Vacío" : buffer.length === 5 ? "Lleno" : "Parcial"})`;
+
+        // Actualizar Condiciones Visuales
+        document.getElementById("condProd").innerHTML =
+          `count < 5 ${buffer.length < 5 ? '<span class="text-green-500">✔</span>' : '<span class="text-red-500">✘</span>'}`;
+        document.getElementById("condCons").innerHTML =
+          `count > 0 ${buffer.length > 0 ? '<span class="text-green-500">✔</span>' : '<span class="text-red-500">✘</span>'}`;
+      }
+
+      async function startProducer() {
+        prodCount++;
+        const id = `P${prodCount}`;
+        const list = document.getElementById("prodList");
+        const badge = document.createElement("div");
+        badge.className =
+          "text-[9px] bg-indigo-100 text-indigo-700 px-2 py-1 rounded flex justify-between items-center";
+        badge.innerHTML = `<span>Productor ${id}</span> <span class="status font-bold">Iniciando...</span>`;
+        list.appendChild(badge);
+
+        const status = badge.querySelector(".status");
+
+        while (buffer.length >= MAX_BUFFER) {
+          status.innerText = "BLOQUEADO (Lleno)";
+          badge.classList.add("waiting");
+          addLog(`Productor ${id} bloqueado: Buffer LLENO.`, "warn");
+          await new Promise((r) => setTimeout(r, 1000));
+        }
+
+        badge.classList.remove("waiting");
+        status.innerText = "Produciendo...";
+        await new Promise((r) => setTimeout(r, 800));
+
+        buffer.push("📦");
+        addLog(`Productor ${id} añadió ítem al buffer.`, "success");
+        updateDisplay();
+
+        status.innerText = "Finalizado";
+        setTimeout(() => badge.remove(), 1000);
+      }
+
+      async function startConsumer() {
+        consCount++;
+        const id = `C${consCount}`;
+        const list = document.getElementById("consList");
+        const badge = document.createElement("div");
+        badge.className =
+          "text-[9px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded flex justify-between items-center";
+        badge.innerHTML = `<span>Consumidor ${id}</span> <span class="status font-bold">Iniciando...</span>`;
+        list.appendChild(badge);
+
+        const status = badge.querySelector(".status");
+
+        while (buffer.length === 0) {
+          status.innerText = "BLOQUEADO (Vacío)";
+          badge.classList.add("waiting");
+          addLog(`Consumidor ${id} bloqueado: Buffer VACÍO.`, "warn");
+          await new Promise((r) => setTimeout(r, 1000));
+        }
+
+        badge.classList.remove("waiting");
+        status.innerText = "Consumiendo...";
+        await new Promise((r) => setTimeout(r, 800));
+
+        buffer.shift();
+        addLog(`Consumidor ${id} procesó ítem del buffer.`, "success");
+        updateDisplay();
+
+        status.innerText = "Finalizado";
+        setTimeout(() => badge.remove(), 1000);
+      }
+
+      updateDisplay();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulador de Semáforos y Regiones Críticas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .thread {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .critical-section {
+        border: 4px dashed #ef4444;
+      }
+      .critical-section.locked {
+        border-style: solid;
+        border-color: #10b981;
+      }
+      @keyframes pulse-red {
+        0%,
+        100% {
+          background-color: #ef4444;
+        }
+        50% {
+          background-color: #fca5a5;
+        }
+      }
+      .collision {
+        animation: pulse-red 0.3s infinite;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 p-4 font-sans text-slate-800">
+    <div
+      class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-xl border border-slate-200"
+    >
+      <div class="flex items-center justify-between mb-6 border-b pb-4">
+        <div>
+          <h1 class="text-2xl font-black text-slate-900">
+            Simulador de Sincronización
+          </h1>
+          <p class="text-xs text-slate-500 uppercase font-bold">
+            Unidad 1.2.5 - Semáforos y Regiones Críticas
+          </p>
+        </div>
+        <div id="semaphoreDisplay" class="flex flex-col items-center">
+          <span class="text-[10px] font-bold text-slate-400 uppercase"
+            >Estado Semáforo</span
+          >
+          <div
+            id="semLight"
+            class="w-8 h-8 rounded-full bg-green-500 shadow-lg shadow-green-200"
+          ></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Controles -->
+        <div class="space-y-4">
+          <div class="bg-slate-100 p-4 rounded-xl border border-slate-200">
+            <h2 class="font-bold text-sm mb-3">Configuración</h2>
+
+            <div class="flex items-center justify-between mb-4">
+              <label class="text-xs font-bold">Usar Semáforo</label>
+              <button
+                id="toggleSem"
+                onclick="toggleSemaphore()"
+                class="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-300 transition"
+              >
+                <span
+                  id="toggleKnob"
+                  class="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-1"
+                ></span>
+              </button>
+            </div>
+
+            <button
+              onclick="spawnThread()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-sm mb-2 shadow-md"
+            >
+              Lanzar Hilo (Thread)
+            </button>
+            <button
+              onclick="resetSim()"
+              class="w-full text-slate-500 text-xs underline"
+            >
+              Reiniciar Sistema
+            </button>
+          </div>
+
+          <div id="dataCard" class="bg-slate-900 p-4 rounded-xl text-white">
+            <h2 class="text-[10px] font-bold text-slate-400 uppercase mb-1">
+              Recurso Compartido (Saldo)
+            </h2>
+            <p id="sharedData" class="text-3xl font-mono text-blue-400">$100</p>
+            <p id="errorMsg" class="text-[10px] text-red-400 mt-2 hidden">
+              ¡ERROR: Corrupción de datos detectada!
+            </p>
+          </div>
+        </div>
+
+        <!-- Área de Simulación Visual -->
+        <div
+          class="md:col-span-2 relative h-64 bg-slate-50 rounded-xl border border-slate-200 overflow-hidden"
+        >
+          <div
+            class="absolute top-0 left-0 p-2 text-[10px] font-bold text-slate-400 uppercase"
+          >
+            Cola de Espera
+          </div>
+          <div
+            class="absolute top-0 right-0 p-2 text-[10px] font-bold text-red-500 uppercase"
+          >
+            Región Crítica
+          </div>
+
+          <!-- Región Crítica -->
+          <div
+            id="critZone"
+            class="absolute right-4 top-8 bottom-8 w-32 bg-white rounded-lg flex flex-col items-center justify-center gap-2 critical-section"
+          >
+            <div id="critLabel" class="text-[9px] font-black text-red-400">
+              DISPONIBLE
+            </div>
+          </div>
+
+          <!-- Contenedor de hilos -->
+          <div id="threadsContainer" class="h-full w-full relative"></div>
+        </div>
+      </div>
+
+      <!-- Logs de Eventos -->
+      <div
+        class="bg-slate-50 rounded-lg p-3 border border-slate-200 h-32 overflow-y-auto font-mono text-[10px]"
+        id="log"
+      >
+        <div class="text-slate-400">
+          > Sistema listo para simular concurrencia...
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let useSemaphore = false;
+      let isLocked = false;
+      let sharedValue = 100;
+      let threadCount = 0;
+      let activeInCrit = 0;
+
+      function toggleSemaphore() {
+        useSemaphore = !useSemaphore;
+        const knob = document.getElementById("toggleKnob");
+        const bg = document.getElementById("toggleSem");
+        knob.style.transform = useSemaphore
+          ? "translateX(24px)"
+          : "translateX(4px)";
+        bg.className = useSemaphore
+          ? "relative inline-flex h-6 w-11 items-center rounded-full bg-green-500 transition"
+          : "relative inline-flex h-6 w-11 items-center rounded-full bg-slate-300 transition";
+        addLog(`Semáforo ${useSemaphore ? "ACTIVADO" : "DESACTIVADO"}`);
+      }
+
+      function addLog(msg) {
+        const log = document.getElementById("log");
+        log.innerHTML += `<div>> ${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
+      }
+
+      function spawnThread() {
+        threadCount++;
+        const id = "T" + threadCount;
+        const container = document.getElementById("threadsContainer");
+
+        const dot = document.createElement("div");
+        dot.id = id;
+        dot.className = `thread absolute left-4 top-${(threadCount % 5) * 10 + 10} w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold shadow-md z-10`;
+        dot.innerText = id;
+        dot.style.top = `${Math.random() * 70 + 10}%`;
+        container.appendChild(dot);
+
+        processThread(id);
+      }
+
+      async function processThread(id) {
+        const dot = document.getElementById(id);
+        addLog(`Hilo ${id} intentando acceder...`);
+
+        // Mover a la entrada de la región crítica
+        dot.style.left = "50%";
+        await new Promise((r) => setTimeout(r, 600));
+
+        if (useSemaphore) {
+          while (isLocked) {
+            addLog(`Hilo ${id} BLOQUEADO por semáforo.`);
+            await new Promise((r) => setTimeout(r, 500));
+          }
+          isLocked = true;
+          updateSemLight(false);
+        }
+
+        enterCriticalSection(id);
+      }
+
+      async function enterCriticalSection(id) {
+        const dot = document.getElementById(id);
+        const zone = document.getElementById("critZone");
+        activeInCrit++;
+
+        // Mover adentro
+        dot.style.left = "calc(100% - 100px)";
+        dot.style.backgroundColor = "#10b981";
+
+        if (activeInCrit > 1 && !useSemaphore) {
+          zone.classList.add("collision");
+          document.getElementById("errorMsg").classList.remove("hidden");
+          addLog(`¡COLISIÓN! Hilo ${id} entró mientras otros operaban.`);
+        }
+
+        document.getElementById("critLabel").innerText = "OCUPADO";
+        addLog(`Hilo ${id} en Región Crítica - Modificando Saldo...`);
+
+        // Simular lectura y escritura lenta
+        let temp = sharedValue;
+        await new Promise((r) => setTimeout(r, 1000));
+        sharedValue = temp - 10;
+        document.getElementById("sharedData").innerText = `$${sharedValue}`;
+
+        exitCriticalSection(id);
+      }
+
+      async function exitCriticalSection(id) {
+        const dot = document.getElementById(id);
+        activeInCrit--;
+
+        if (activeInCrit === 0) {
+          document.getElementById("critZone").classList.remove("collision");
+          document.getElementById("critLabel").innerText = "DISPONIBLE";
+        }
+
+        dot.style.left = "110%";
+        addLog(`Hilo ${id} completado y liberado.`);
+
+        if (useSemaphore) {
+          isLocked = false;
+          updateSemLight(true);
+        }
+
+        setTimeout(() => dot.remove(), 500);
+      }
+
+      function updateSemLight(free) {
+        const light = document.getElementById("semLight");
+        light.className = free
+          ? "w-8 h-8 rounded-full bg-green-500 shadow-lg shadow-green-200"
+          : "w-8 h-8 rounded-full bg-red-500 shadow-lg shadow-red-200 animate-pulse";
+      }
+
+      function resetSim() {
+        sharedValue = 100;
+        threadCount = 0;
+        activeInCrit = 0;
+        isLocked = false;
+        document.getElementById("sharedData").innerText = `$100`;
+        document.getElementById("threadsContainer").innerHTML = "";
+        document.getElementById("errorMsg").classList.add("hidden");
+        document.getElementById("critZone").classList.remove("collision");
+        document.getElementById("critLabel").innerText = "DISPONIBLE";
+        updateSemLight(true);
+        addLog("Sistema Reiniciado.");
+      }
+    </script>
+  </body>
+</html>

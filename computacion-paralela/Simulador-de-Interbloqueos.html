@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulador de Interbloqueos (Deadlock)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .table-circle {
+        position: relative;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background-color: #f8fafc;
+        border: 10px solid #e2e8f0;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      .philosopher {
+        position: absolute;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 20;
+      }
+      .fork {
+        position: absolute;
+        width: 45px;
+        height: 10px;
+        background-color: #94a3b8;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        z-index: 10;
+      }
+      .eating {
+        animation: pulse-green 1.2s infinite;
+        border-color: #10b981 !important;
+        background-color: #f0fdf4 !important;
+        transform: scale(1.15);
+      }
+      .waiting {
+        border-color: #f59e0b !important;
+        background-color: #fffbeb !important;
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+      }
+      @keyframes pulse-green {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+        }
+        50% {
+          box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 p-4 font-sans text-slate-800">
+    <div
+      class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-xl border border-slate-200"
+    >
+      <header class="mb-6 border-b pb-4 flex justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-black text-slate-900">
+            Simulador de Interbloqueos (Deadlock)
+          </h1>
+          <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">
+            Problema de los Filósofos Comensales
+          </p>
+        </div>
+        <div
+          id="statusIndicator"
+          class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter"
+        >
+          Sistema en Orden
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Interfaz de la Mesa -->
+        <div
+          class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-xl border border-slate-100"
+        >
+          <div class="table-circle" id="table">
+            <!-- Generado por JS -->
+          </div>
+          <div class="mt-6 flex gap-4 text-[10px] font-bold text-slate-400">
+            <div class="flex items-center gap-1">
+              <span class="w-3 h-3 rounded-full bg-slate-300"></span> Pensando
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="w-3 h-3 rounded-full bg-amber-400"></span> Esperando
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Comiendo
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles e Información -->
+        <div class="space-y-4">
+          <div
+            class="bg-slate-100 p-5 rounded-xl border border-slate-200 shadow-sm"
+          >
+            <h2 class="font-bold text-sm mb-3 text-slate-700">
+              Panel de Control de Sincronización
+            </h2>
+            <p class="text-[11px] text-slate-500 mb-4 leading-relaxed">
+              En este escenario, cada filósofo (hilo) necesita dos tenedores
+              (recursos) para comer. Si todos toman el tenedor izquierdo a la
+              vez, nadie puede comer.
+            </p>
+
+            <div class="space-y-3">
+              <button
+                onclick="startSimulation()"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                LANZAR SIMULACIÓN NORMAL
+              </button>
+              <button
+                onclick="induceDeadlock()"
+                class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-lg text-xs shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                PROVOCAR DEADLOCK (INTERBLOQUEO)
+              </button>
+              <button
+                onclick="resetSim()"
+                class="w-full text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest mt-2 underline"
+              >
+                Restaurar Mesa
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="bg-slate-900 text-blue-400 p-4 rounded-xl h-48 overflow-y-auto font-mono text-[10px] shadow-inner"
+            id="log"
+          >
+            <div>> Simulador listo. Esperando comandos...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const philCount = 5;
+      const philNodes = [];
+      const forkNodes = [];
+      const forksState = [true, true, true, true, true];
+      let isDeadlocked = false;
+      let isSimulating = false;
+
+      function initTable() {
+        const table = document.getElementById("table");
+        table.innerHTML = "";
+        for (let i = 0; i < philCount; i++) {
+          // Generar Filósofo
+          const angle = (i * 2 * Math.PI) / philCount;
+          const x = 160 + 120 * Math.cos(angle) - 25;
+          const y = 160 + 120 * Math.sin(angle) - 25;
+
+          const p = document.createElement("div");
+          p.id = `phil-${i}`;
+          p.className =
+            "philosopher w-14 h-14 rounded-full border-4 border-slate-300 bg-white flex items-center justify-center font-black text-xs shadow-lg";
+          p.style.left = `${x}px`;
+          p.style.top = `${y}px`;
+          p.innerHTML = `F${i + 1}`;
+          table.appendChild(p);
+          philNodes.push(p);
+
+          // Generar Tenedor
+          const fAngle = ((i + 0.5) * 2 * Math.PI) / philCount;
+          const fx = 160 + 85 * Math.cos(fAngle) - 22;
+          const fy = 160 + 85 * Math.sin(fAngle) - 5;
+
+          const f = document.createElement("div");
+          f.id = `fork-${i}`;
+          f.className = "fork shadow-sm";
+          f.style.left = `${fx}px`;
+          f.style.top = `${fy}px`;
+          f.style.transform = `rotate(${(fAngle * 180) / Math.PI}deg)`;
+          table.appendChild(f);
+          forkNodes.push(f);
+        }
+      }
+
+      function addLog(msg, type = "info") {
+        const log = document.getElementById("log");
+        const color =
+          type === "error"
+            ? "text-red-400"
+            : type === "success"
+              ? "text-emerald-400"
+              : "text-blue-400";
+        log.innerHTML += `<div class="${color}">> ${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
+      }
+
+      async function startSimulation() {
+        if (isDeadlocked || isSimulating) return;
+        isSimulating = true;
+        addLog(
+          "Ciclo automático: Los filósofos intentan comer de forma aleatoria.",
+        );
+        for (let i = 0; i < 20; i++) {
+          if (isDeadlocked) break;
+          const pIdx = Math.floor(Math.random() * philCount);
+          executePhilosopher(pIdx);
+          await new Promise((r) => setTimeout(r, 600));
+        }
+        isSimulating = false;
+      }
+
+      async function executePhilosopher(i) {
+        const phil = philNodes[i];
+        const leftFork = i;
+        const rightFork = (i + 1) % philCount;
+
+        if (
+          phil.classList.contains("eating") ||
+          phil.classList.contains("waiting")
+        )
+          return;
+
+        phil.classList.add("waiting");
+        addLog(`Filósofo ${i + 1} está hambriento...`);
+
+        await new Promise((r) => setTimeout(r, 400));
+
+        if (forksState[leftFork] && forksState[rightFork]) {
+          forksState[leftFork] = false;
+          forksState[rightFork] = false;
+          updateForkUI(leftFork, i, true);
+          updateForkUI(rightFork, i, true);
+
+          phil.classList.remove("waiting");
+          phil.classList.add("eating");
+          addLog(`Filósofo ${i + 1} está COMIENDO.`, "success");
+
+          await new Promise((r) => setTimeout(r, 2000));
+
+          phil.classList.remove("eating");
+          forksState[leftFork] = true;
+          forksState[rightFork] = true;
+          updateForkUI(leftFork, i, false);
+          updateForkUI(rightFork, i, false);
+          addLog(`Filósofo ${i + 1} terminó de comer y vuelve a pensar.`);
+        } else {
+          addLog(
+            `Filósofo ${i + 1} no encontró tenedores libres y sigue pensando.`,
+            "warn",
+          );
+          phil.classList.remove("waiting");
+        }
+      }
+
+      function updateForkUI(fIdx, pIdx, taken) {
+        const f = forkNodes[fIdx];
+        if (taken) {
+          f.style.backgroundColor = "#3b82f6";
+          f.style.opacity = "0.2";
+        } else {
+          f.style.backgroundColor = "#94a3b8";
+          f.style.opacity = "1";
+        }
+      }
+
+      function induceDeadlock() {
+        resetSim();
+        isDeadlocked = true;
+        addLog(
+          "Provocando 'Espera Circular': Cada filósofo toma su tenedor izquierdo...",
+          "error",
+        );
+
+        philNodes.forEach((p, i) => {
+          setTimeout(() => {
+            p.classList.add("waiting");
+            updateForkUI(i, i, true);
+            addLog(`Filósofo ${i + 1} tomó el tenedor ${i + 1}.`);
+          }, i * 200);
+        });
+
+        setTimeout(() => {
+          const indicator = document.getElementById("statusIndicator");
+          indicator.innerText = "INTERBLOQUEO (DEADLOCK)";
+          indicator.className =
+            "bg-red-500 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase animate-pulse";
+          addLog(
+            "CRÍTICO: Todos esperan, nadie libera. El sistema está congelado.",
+            "error",
+          );
+        }, 1500);
+      }
+
+      function resetSim() {
+        isDeadlocked = false;
+        isSimulating = false;
+        forksState.fill(true);
+        philNodes.forEach((p) => {
+          p.className =
+            "philosopher w-14 h-14 rounded-full border-4 border-slate-300 bg-white flex items-center justify-center font-black text-xs shadow-lg";
+        });
+        forkNodes.forEach((f) => {
+          f.style.backgroundColor = "#94a3b8";
+          f.style.opacity = "1";
+        });
+        const indicator = document.getElementById("statusIndicator");
+        indicator.innerText = "Sistema en Orden";
+        indicator.className =
+          "bg-green-100 text-green-700 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter";
+        addLog("Mesa restaurada a su estado inicial.");
+      }
+
+      window.onload = initTable;
+    </script>
+  </body>
+</html>
