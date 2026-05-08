@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/styles.css" />
   <style>
     .doc-content {
-      max-width: 800px;
+      max-width: var(--max-w);
       margin: 0 auto;
       line-height: 1.8;
       color: var(--text-muted);
@@ -121,8 +121,18 @@
         <li class="dropdown">
           <a href="temas.html" class="active">Temas ▾</a>
           <ul class="dropdown-menu">
-            <li><a href="recursividad.html">Estructura de Datos: Recursividad</a></li>
-            <!-- Espacio para agregar más temas -->
+            <li class="dropdown dropdown-nested">
+              <a href="estructura-datos.html" class="active">Estructura de Datos ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="recursividad.html" class="active">Recursividad</a></li>
+              </ul>
+            </li>
+            <li class="dropdown dropdown-nested">
+              <a href="computacion-grafica.html">Computación Gráfica ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="computacion-grafica.html">Geometría Aplicada</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li><a href="fundamentos.html">Ejercicios</a></li>

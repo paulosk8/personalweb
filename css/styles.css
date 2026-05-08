@@ -154,7 +154,7 @@ ul { list-style: none; }
   padding: 0.5rem 0;
   z-index: 1000;
 }
-.dropdown:hover .dropdown-menu {
+.dropdown:hover > .dropdown-menu {
   display: block;
 }
 .dropdown-menu li {
@@ -168,6 +168,30 @@ ul { list-style: none; }
 }
 .dropdown-menu a:hover {
   background: var(--accent-dim);
+}
+
+/* Nested (second-level) dropdown */
+.dropdown-nested {
+  position: relative;
+}
+.dropdown-submenu {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  min-width: 200px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+}
+.dropdown-nested:hover > .dropdown-submenu {
+  display: block;
+}
+/* Arrow indicator for nested items */
+.dropdown-nested > a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .theme-switch-wrapper {

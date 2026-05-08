@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vectorized Worlds - Calculador Maestro Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f1f5f9; }
+        .math-font { font-family: 'Fira Code', monospace; }
+        canvas { background: #0f172a; border-radius: 16px; width: 100%; height: 500px; cursor: crosshair; border: 1px solid #1e293b; }
+        .btn-tab { transition: all 0.3s; border-left: 4px solid transparent; }
+        .btn-tab.active { background: #1e293b; border-left-color: #3b82f6; color: #3b82f6; }
+        .formula-box { background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; padding: 20px; border-radius: 12px; }
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ef4444; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #22c55e; }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .symbol-tag { background: #1e293b; padding: 2px 6px; border-radius: 4px; color: #3b82f6; font-weight: bold; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <aside class="w-80 bg-slate-900 border-r border-slate-800 flex flex-col shadow-2xl">
+        <div class="p-6 border-b border-slate-800">
+            <h1 class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 italic uppercase">Vectorized Worlds</h1>
+            <p class="text-[10px] text-slate-500 mt-1 tracking-widest font-bold">CALCULADOR MAESTRO V1.3</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto p-2" id="nav-topics">
+            <!-- Dinámico -->
+        </nav>
+    </aside>
+
+    <!-- Panel de Control y Teoría -->
+    <main class="flex-1 flex flex-row overflow-hidden">
+        
+        <section class="w-1/2 p-8 overflow-y-auto border-r border-slate-800 bg-slate-900/40">
+            <div id="topic-header" class="mb-6">
+                <span id="topic-use" class="text-[10px] font-black text-blue-400 bg-blue-500/10 px-2 py-1 rounded uppercase tracking-widest"></span>
+                <h2 id="topic-title" class="text-3xl font-bold mt-3 text-white"></h2>
+                <p id="topic-desc" class="text-slate-400 text-sm mt-2 leading-relaxed"></p>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-slate-800/40 rounded-xl border border-slate-700 mb-8">
+                <div>
+                    <span class="text-[10px] text-slate-500 uppercase font-bold">Modo de Aprendizaje</span>
+                    <div class="flex items-center gap-3 mt-1">
+                        <span class="text-xs font-bold text-red-400">ERROR (Crudo)</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="mode-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="text-xs font-bold text-green-400">CORREGIDO (Graficos)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Estructura Matemática</h3>
+                <div id="math-formula" class="text-2xl py-6 bg-slate-950/50 rounded-xl border border-slate-800 text-center mb-6"></div>
+                
+                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Contexto de Símbolos y Ubicación</h3>
+                <div id="symbol-glossary" class="space-y-4 mb-6">
+                    <!-- Dinámico -->
+                </div>
+
+                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Desglose de Cálculo Real</h3>
+                <div id="math-steps" class="math-font text-xs text-blue-300 bg-slate-950/30 p-4 rounded-lg border border-slate-800/50 leading-relaxed min-h-[100px]">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+
+            <div id="controls-panel" class="grid grid-cols-2 gap-6 mt-8">
+                <!-- Dinámico -->
+            </div>
+        </section>
+
+        <!-- Visualización -->
+        <section class="w-1/2 p-8 flex flex-col bg-slate-950 relative">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Visualización Dinámica</h3>
+                <span class="text-[10px] font-mono text-slate-600 tracking-tighter">RENDER_ENGINE_2D</span>
+            </div>
+            <canvas id="mainCanvas"></canvas>
+            <div class="mt-8 text-center p-6 bg-slate-900/30 rounded-2xl border border-white/5">
+                <p id="visual-insight" class="text-sm text-slate-400 italic leading-relaxed"></p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const topics = [
+            {
+                id: 'normalization',
+                title: 'Normalización',
+                use: 'Velocidad Constante',
+                desc: 'Se utiliza para obtener la "dirección pura" sin importar la fuerza inicial. En juegos, esto evita que el personaje acelere un 41% extra al moverse en diagonal.',
+                formula: '\\hat{v} = \\frac{\\vec{v}}{|\\vec{v}|}',
+                glossary: [
+                    ['\\vec{v}', 'Input del Jugador. Es la fuerza aplicada (ej. X=1, Y=1). Se ubica en el numerador para mantener el sentido del movimiento.'],
+                    ['|\\vec{v}|', 'Magnitud (Escalar). Es el largo total de la flecha. Se ubica en el denominador para "encoger" el vector hasta que mida exactamente 1.'],
+                    ['\\hat{v}', 'Dirección Final. El resultado que el motor gráfico usará para mover al personaje de forma justa.']
+                ],
+                insight_wrong: '⚠️ Error: La velocidad resultante es mayor a 1. El jugador corre de más.',
+                insight_correct: '✅ Corregido: La velocidad es exactamente 1 en cualquier ángulo.',
+                inputs: [
+                    { id: 'vX', label: 'Input X (Teclado)', min: -1, max: 1, step: 0.1, val: 0.7 },
+                    { id: 'vY', label: 'Input Y (Teclado)', min: -1, max: 1, step: 0.1, val: 0.7 }
+                ]
+            },
+            {
+                id: 'dotproduct',
+                title: 'Producto Interno',
+                use: 'Sombreado Lambert',
+                desc: 'Calcula la coincidencia entre la luz y la cara de un objeto. Sirve para saber cuánto brilla cada píxel en la pantalla.',
+                formula: 'L = \\max(0, \\hat{N} \\cdot \\hat{L})',
+                glossary: [
+                    ['\\hat{N}', 'Normal. Indica hacia dónde apunta la superficie. Es el punto de referencia para recibir la luz.'],
+                    ['\\hat{L}', 'Rayo de Luz. Dirección desde donde viene la iluminación. Ubicarlo aquí permite medir el ángulo de impacto.'],
+                    ['\\cdot', 'Producto Punto. Multiplica componente por componente. Si el ángulo es 0°, el brillo es máximo (1.0).']
+                ],
+                insight_wrong: '⚠️ Error: Brillo inestable por culpa de la distancia (Vectores no normalizados).',
+                insight_correct: '✅ Corregido: Brillo suave y constante basado únicamente en la inclinación.',
+                inputs: [
+                    { id: 'lDist', label: 'Longitud Vector Luz', min: 20, max: 200, step: 1, val: 120 },
+                    { id: 'lAngle', label: 'Ángulo Luz (Rotación)', min: 0, max: 6.28, step: 0.1, val: 0.8 }
+                ]
+            },
+            {
+                id: 'crossproduct',
+                title: 'Producto Vectorial',
+                use: 'Cálculo de Normales',
+                desc: 'Permite hallar un eje perpendicular a otros dos. Se usa para orientar cámaras, torretas o sombras proyectadas en terrenos.',
+                formula: '\\vec{N} = \\vec{A} \\times \\vec{B}',
+                glossary: [
+                    ['\\vec{A}, \\vec{B}', 'Ejes del Plano. Representan el suelo o la pared. Se ubican en la fórmula para definir el plano de base.'],
+                    ['\\vec{N}', 'Vector Normal. Es el resultado perpendicular. Sirve para definir el "Arriba" relativo del objeto.'],
+                    ['\\times', 'Operador Cruz. Combina X e Y para extraer la dimensión Z (profundidad/altura).']
+                ],
+                insight_wrong: '⚠️ Error: La normal se estira porque el área de la base es muy grande.',
+                insight_correct: '✅ Corregido: La normal es unitaria (1.0). Indica orientación pura sin importar el tamaño.',
+                inputs: [
+                    { id: 'baseW', label: 'Ancho de Superficie', min: 20, max: 200, step: 1, val: 100 },
+                    { id: 'heightZ', label: 'Elevación de Rampa', min: -100, max: 100, step: 1, val: 50 }
+                ]
+            },
+            {
+                id: 'matrices',
+                title: 'Matrices',
+                use: 'Aislamiento (UI)',
+                desc: 'Transforman coordenadas. El determinante ($ad - bc$) indica si el objeto ha crecido, encogido o se ha invertido.',
+                formula: '\\det(M) = a \\cdot d - b \\cdot c',
+                glossary: [
+                    ['a, d', 'Escala. Ubicados en la diagonal principal para estirar X e Y.'],
+                    ['b, c', 'Cizallado. Ubicados fuera de la diagonal para inclinar la forma.'],
+                    ['\\det(M)', 'Determinante. Indica el cambio total de área. Útil para optimizar el dibujado de mallas.']
+                ],
+                insight_wrong: '⚠️ Error: La UI (vida) se deforma junto al personaje (Falta aislamiento).',
+                insight_correct: '✅ Corregido: Uso de push/pop para aislar la transformación del personaje.',
+                inputs: [
+                    { id: 'mScale', label: 'Factor de Escala', min: 0.5, max: 2.5, step: 0.1, val: 1.5 },
+                    { id: 'mShear', label: 'Factor de Cizalla', min: -1, max: 1, step: 0.1, val: 0.3 }
+                ]
+            },
+            {
+                id: 'projection',
+                title: 'Proyección',
+                use: 'Punto más Cercano',
+                desc: 'Halla la ubicación exacta de un muro que está más cerca del jugador. Se usa para colisiones en muros curvos o inclinados.',
+                formula: 'P_{p} = A + t(\\vec{AB})',
+                glossary: [
+                    ['A', 'Inicio del Muro. Es el punto de anclaje para empezar el cálculo.'],
+                    ['t', 'Factor de Progreso. Valor entre 0 y 1 que indica en qué parte de la línea estás.'],
+                    ['\\vec{AB}', 'Vector Muro. Define la dirección y extensión del obstáculo.']
+                ],
+                insight_wrong: '⚠️ Error: El sistema solo detecta los bordes. El medio es ignorado.',
+                insight_correct: '✅ Corregido: El punto rojo sigue suavemente tu posición sobre la línea.',
+                inputs: [
+                    { id: 'wallLen', label: 'Largo del Segmento', min: 100, max: 400, step: 1, val: 300 }
+                ]
+            },
+            {
+                id: 'raycasting',
+                title: 'Ray Casting',
+                use: 'Detección RTS',
+                desc: 'Lanza un rayo desde el ratón y cuenta cuántas paredes choca. Sirve para saber si un clic ocurrió dentro de una zona compleja.',
+                formula: 'E = (\\text{Cruces} \\pmod 2)',
+                glossary: [
+                    ['Cruces', 'Intersecciones. Cada choque con una pared indica que "entraste" o "saliste" de la figura.'],
+                    ['\\pmod 2', 'Paridad. Impar = Adentro. Par = Afuera. Es la lógica lógica binaria de la inclusión.'],
+                    ['Rayo', 'Línea de Sonda. Sale del ratón hacia el infinito para escanear el escenario.']
+                ],
+                insight_wrong: '⚠️ Error: Te detecta en el hueco porque usa un rectángulo simple.',
+                insight_correct: '✅ Corregido: Detección perfecta basada en la geometría real.',
+                inputs: []
+            }
+        ];
+
+        let activeTopic = topics[0];
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const nav = document.getElementById('nav-topics');
+        const modeToggle = document.getElementById('mode-toggle');
+        const controls = document.getElementById('controls-panel');
+        let width, height;
+
+        function resize() {
+            width = canvas.clientWidth; height = canvas.clientHeight;
+            canvas.width = width; canvas.height = height;
+        }
+        window.addEventListener('resize', resize); resize();
+
+        // Menú
+        topics.forEach((t, i) => {
+            const b = document.createElement('button');
+            b.className = `btn-tab w-full text-left px-5 py-4 text-sm hover:bg-slate-800 transition ${i===0?'active':''}`;
+            b.innerHTML = `<span class="block text-[10px] opacity-40 uppercase font-black mb-1 tracking-widest">${t.use}</span>${t.title}`;
+            b.onclick = () => {
+                document.querySelectorAll('.btn-tab').forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                activeTopic = t;
+                updateUI();
+            };
+            nav.appendChild(b);
+        });
+
+        function updateUI() {
+            document.getElementById('topic-title').innerText = activeTopic.title;
+            document.getElementById('topic-use').innerText = activeTopic.use;
+            document.getElementById('topic-desc').innerText = activeTopic.desc;
+            katex.render(activeTopic.formula, document.getElementById('math-formula'));
+
+            const glos = document.getElementById('symbol-glossary');
+            glos.innerHTML = '';
+            activeTopic.glossary.forEach(([s, d]) => {
+                const div = document.createElement('div');
+                div.className = 'flex gap-3 text-xs border-l-2 border-slate-700 pl-3 leading-tight py-1';
+                const st = document.createElement('span'); st.className = 'symbol-tag min-w-[40px] text-center';
+                katex.render(s, st);
+                div.appendChild(st);
+                div.innerHTML += `<span class="text-slate-400">${d}</span>`;
+                glos.appendChild(div);
+            });
+
+            controls.innerHTML = '';
+            activeTopic.inputs.forEach(i => {
+                const div = document.createElement('div');
+                div.innerHTML = `<label class="text-[10px] text-slate-500 uppercase font-bold tracking-tighter">${i.label}</label>
+                <input type="range" id="${i.id}" min="${i.min}" max="${i.max}" step="${i.step}" value="${i.val}" class="w-full mt-1 accent-blue-500">`;
+                controls.appendChild(div);
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0,0,width,height);
+            const isCorrect = modeToggle.checked;
+            const steps = document.getElementById('math-steps');
+            steps.innerHTML = '';
+            const cx = width/2, cy = height/2;
+
+            if (activeTopic.id === 'normalization') {
+                const x = parseFloat(document.getElementById('vX').value);
+                const y = parseFloat(document.getElementById('vY').value);
+                const mag = Math.sqrt(x*x + y*y);
+                ctx.strokeStyle = '#1e293b'; ctx.beginPath(); ctx.arc(cx, cy, 100, 0, 7); ctx.stroke();
+                
+                let rx, ry;
+                if(isCorrect) {
+                    rx = (x/mag)*100; ry = (y/mag)*100;
+                    steps.innerHTML = `PASO 1: Calcular Magnitud |v| = √(${x}² + ${y}²) = ${mag.toFixed(2)}<br>
+                    PASO 2: Normalizar v_x = ${x}/${mag.toFixed(2)} = ${(x/mag).toFixed(2)} | v_y = ${y}/${mag.toFixed(2)} = ${(y/mag).toFixed(2)}<br>
+                    <span class="text-green-400">RESULTADO: Vector de longitud 1.0 (Unitario)</span>`;
+                } else {
+                    rx = x*100; ry = y*100;
+                    steps.innerHTML = `ESTADO: v_x = ${x}, v_y = ${y}<br>MAGNITUD ACTUAL: ${mag.toFixed(2)}<br>
+                    <span class="text-red-400">ERROR: Longitud mayor a 1.0. Movimiento desbalanceado.</span>`;
+                }
+                drawArrow(cx, cy, cx+rx, cy+ry, isCorrect?'#22c55e':'#ef4444');
+            }
+
+            else if (activeTopic.id === 'dotproduct') {
+                const d = parseFloat(document.getElementById('lDist').value);
+                const a = parseFloat(document.getElementById('lAngle').value);
+                const lx = Math.cos(a)*d + cx + 100;
+                const ly = Math.sin(a)*d + cy;
+
+                ctx.fillStyle = '#020617'; ctx.beginPath(); ctx.arc(cx, cy, 80, 0, 7); ctx.fill();
+                
+                // Muestra cálculo de un punto arbitrario (el superior)
+                let sampleRad = -Math.PI/2;
+                let Nx = Math.cos(sampleRad), Ny = Math.sin(sampleRad);
+                let Lx = lx - (cx + Nx*80), Ly = ly - (cy + Ny*80);
+                let Lm = Math.hypot(Lx, Ly);
+                let dot = isCorrect ? (Nx*(Lx/Lm) + Ny*(Ly/Lm)) : (Nx*Lx + Ny*Ly)/100;
+                
+                steps.innerHTML = `VECTOR NORMAL (N): (${Nx.toFixed(2)}, ${Ny.toFixed(2)})<br>
+                VECTOR LUZ (L): (${(Lx/Lm).toFixed(2)}, ${(Ly/Lm).toFixed(2)})<br>
+                DOT PRODUCT (N · L): ${dot.toFixed(2)}<br>
+                <span class="${isCorrect?'text-green-400':'text-red-400'}">BRILLO RESULTANTE: ${(Math.max(0, dot)*100).toFixed(0)}%</span>`;
+
+                for(let i=0; i<360; i+=10) {
+                    let rad = i*Math.PI/180;
+                    let px = cx+Math.cos(rad)*80, py = cy+Math.sin(rad)*80;
+                    let nX = Math.cos(rad), nY = Math.sin(sampleRad); // Fallback visual
+                    let lX = lx-px, lY = ly-py;
+                    let m = Math.hypot(lX, lY);
+                    let dVal = isCorrect ? (Math.cos(rad)*(lX/m) + Math.sin(rad)*(lY/m)) : (Math.cos(rad)*lX + Math.sin(rad)*lY)/100;
+                    let b = Math.max(0, dVal)*255;
+                    ctx.fillStyle = `rgb(${b},${b},${b/2})`;
+                    ctx.beginPath(); ctx.arc(px, py, 4, 0, 7); ctx.fill();
+                }
+                ctx.fillStyle = 'yellow'; ctx.beginPath(); ctx.arc(lx, ly, 8, 0, 7); ctx.fill();
+            }
+
+            else if (activeTopic.id === 'crossproduct') {
+                const w = parseFloat(document.getElementById('baseW').value);
+                const z = parseFloat(document.getElementById('heightZ').value);
+                
+                // Representación de vectores para el cálculo
+                // Vector A (Horizontal en X): (w, 0, 0)
+                // Vector B (Inclinado en Y/Z): (0, 0, z)
+                // N = A x B = (0, -w*z, 0)
+                let crossZ = w * z;
+                let nMag = isCorrect ? 80 : (Math.abs(crossZ) / 100);
+
+                steps.innerHTML = `VECTORES DE SUPERFICIE:<br>
+                Vector A (Ancho): (${w}, 0, 0)<br>
+                Vector B (Elevación): (0, 0, ${z})<br>
+                PRODUCTO CRUZ (A x B): (0, -${(w*z).toFixed(0)}, 0)<br>
+                <span class="${isCorrect?'text-green-400':'text-red-400'}">MAGNITUD DE NORMAL: ${nMag.toFixed(2)} ${isCorrect?'(NORMALIZADA a 1.0)':'(ERROR: Basada en Área)'}</span>`;
+
+                ctx.strokeStyle = '#334155'; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(cx - w, cy + z/4); ctx.lineTo(cx + w, cy - z/4); ctx.stroke();
+                
+                // Dibujar Normal
+                let dy = isCorrect ? -80 : -(Math.abs(crossZ)/150) - 10;
+                drawArrow(cx, cy, cx, cy + dy, isCorrect?'#22c55e':'#ef4444');
+            }
+
+            else if (activeTopic.id === 'matrices') {
+                const s = parseFloat(document.getElementById('mScale').value);
+                const k = parseFloat(document.getElementById('mShear').value);
+                const det = (s * s) - (k * 0); // Simplificado para visual
+
+                steps.innerHTML = `MATRIZ ACTUAL (M):<br>
+                [ ${s.toFixed(1)} , ${k.toFixed(1)} ]<br>
+                [ 0.0 , ${s.toFixed(1)} ]<br>
+                DETERMINANTE (ad - bc): (${s} * ${s}) - (${k} * 0) = ${det.toFixed(2)}<br>
+                <span class="text-blue-400">EL ÁREA ES ${(det*100).toFixed(0)}% DEL ORIGINAL</span>`;
+
+                ctx.save();
+                if(isCorrect) {
+                    ctx.fillStyle='white'; ctx.fillText("VIDA: 100%", 20, 30);
+                    ctx.translate(cx, cy); ctx.transform(s, 0, k, s, 0, 0);
+                } else {
+                    ctx.translate(cx, cy); ctx.transform(s, 0, k, s, 0, 0);
+                    ctx.fillStyle='white'; ctx.fillText("VIDA: 100%", 20-cx, 30-cy);
+                }
+                ctx.fillStyle='#3b82f6'; ctx.fillRect(-30,-30,60,60);
+                ctx.restore();
+            }
+
+            else if (activeTopic.id === 'projection') {
+                const l = parseFloat(document.getElementById('wallLen').value);
+                const A = {x: cx-l/2, y: cy+50}, B = {x: cx+l/2, y: cy-50}, P = {x: mX, y: mY};
+                
+                const AB = {x: B.x-A.x, y: B.y-A.y}, AP = {x: P.x-A.x, y: P.y-A.y};
+                let dot = (AP.x*AB.x + AP.y*AB.y);
+                let magSq = (AB.x*AB.x + AB.y*AB.y);
+                let t = dot / magSq;
+                
+                steps.innerHTML = `DISTANCIA AP (Jugador a A): (${AP.x.toFixed(0)}, ${AP.y.toFixed(0)})<br>
+                DISTANCIA AB (Largo Muro): (${AB.x.toFixed(0)}, ${AB.y.toFixed(0)})<br>
+                FACTOR DE PROYECCIÓN (t): ${t.toFixed(4)}<br>
+                <span class="${isCorrect?'text-green-400':'text-red-400'}">PUNTO DESTINO: ${isCorrect?'Calculado sobre t':'Salto a Extremos'}</span>`;
+
+                ctx.strokeStyle='white'; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
+                let pJ = isCorrect ? {x: A.x + Math.max(0, Math.min(1, t))*AB.x, y: A.y + Math.max(0, Math.min(1, t))*AB.y} : (Math.hypot(P.x-A.x, P.y-A.y) < Math.hypot(P.x-B.x, P.y-B.y) ? A : B);
+                
+                ctx.setLineDash([5,5]); ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.moveTo(P.x, P.y); ctx.lineTo(pJ.x, pJ.y); ctx.stroke();
+                ctx.setLineDash([]); ctx.fillStyle='red'; ctx.beginPath(); ctx.arc(pJ.x, pJ.y, 6, 0, 7); ctx.fill();
+                ctx.fillStyle='#facc15'; ctx.beginPath(); ctx.arc(P.x, P.y, 10, 0, 7); ctx.fill();
+            }
+
+            else if (activeTopic.id === 'raycasting') {
+                const poly = [{x:cx-80,y:cy-80}, {x:cx+80,y:cy-80}, {x:cx+80,y:cy+80}, {x:cx,y:cy}, {x:cx-80,y:cy+80}];
+                ctx.strokeStyle='#3b82f6'; ctx.beginPath(); ctx.moveTo(poly[0].x, poly[0].y); poly.forEach(p => ctx.lineTo(p.x, p.y)); ctx.closePath(); ctx.stroke();
+                
+                let count = 0;
+                for(let i=0; i<poly.length; i++) {
+                    let a = poly[i], b = poly[(i+1)%poly.length];
+                    if((a.y > mY) != (b.y > mY) && (mX < (b.x-a.x)*(mY-a.y)/(b.y-a.y)+a.x)) count++;
+                }
+                
+                steps.innerHTML = `ESCANEO DE RAYO HORIZONTAL:<br>
+                Altura Y del Cursor: ${mY.toFixed(0)} px<br>
+                Intersecciones con Aristas: ${count}<br>
+                ESTADO LÓGICO: ${count} Mod 2 = ${count % 2}<br>
+                <span class="${count%2?'text-green-400':'text-slate-500'}">${count%2?'¡ESTÁS DENTRO! (IMPAR)':'ESTÁS FUERA (PAR)'}</span>`;
+
+                if(isCorrect) {
+                    ctx.strokeStyle='rgba(255,0,0,0.5)'; ctx.beginPath(); ctx.moveTo(mX, mY); ctx.lineTo(width, mY); ctx.stroke();
+                }
+                let inFinal = isCorrect ? (count%2) : (mX > cx-80 && mX < cx+80 && mY > cy-80 && mY < cy+80);
+                ctx.fillStyle = inFinal ? '#22c55e' : '#475569';
+                ctx.beginPath(); ctx.arc(mX, mY, 8, 0, 7); ctx.fill();
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        let mX = 0, mY = 0;
+        canvas.addEventListener('mousemove', e => {
+            const r = canvas.getBoundingClientRect();
+            mX = e.clientX - r.left; mY = e.clientY - r.top;
+        });
+
+        function drawArrow(x1, y1, x2, y2, color) {
+            const h = 10; const a = Math.atan2(y2 - y1, x2 - x1);
+            ctx.strokeStyle = color; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+            ctx.lineTo(x2-h*Math.cos(a-Math.PI/6), y2-h*Math.sin(a-Math.PI/6));
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2-h*Math.cos(a+Math.PI/6), y2-h*Math.sin(a+Math.PI/6));
+            ctx.stroke();
+        }
+
+        updateUI(); draw();
+    </script>
+</body>
+</html>

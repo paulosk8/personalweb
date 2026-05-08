@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Computación Gráfica: Geometría Aplicada | Paulo Galarza</title>
+  <meta name="description" content="Geometría Aplicada en Computación Gráfica — Simulador interactivo, diapositivas, infografías y podcasts sobre vectores, matrices y gráficos 3D." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .breadcrumb a { color: var(--accent); font-weight: 500; }
+    .breadcrumb span { opacity: 0.5; }
+
+    /* ── Section anchors ── */
+    .resource-section {
+      margin-top: 4rem;
+      padding-top: 2.5rem;
+      border-top: 2px dashed var(--border);
+    }
+    .resource-section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .resource-section-title .icon { font-size: 1.4rem; }
+    .resource-section-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── Resource card ── */
+    .resource-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.6rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+    }
+    .resource-card:last-child { margin-bottom: 0; }
+    .resource-card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .resource-card-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+    .resource-card-desc:last-child { margin-bottom: 0; }
+
+    /* ── Simulator ── */
+    .sim-wrapper {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .sim-iframe {
+      width: 100%;
+      height: 90vh;
+      min-height: 600px;
+      border: none;
+      display: block;
+    }
+
+    /* ── PDF embed ── */
+    .pdf-embed {
+      width: 100%;
+      height: 620px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      display: block;
+    }
+    .pdf-fallback {
+      font-size: 0.82rem;
+      text-align: center;
+      margin-top: 0.5rem;
+      color: var(--text-muted);
+    }
+    .pdf-fallback a { text-decoration: underline; }
+
+    /* ── Infographic grid ── */
+    .infographic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 720px) { .infographic-grid { grid-template-columns: 1fr; } }
+    .infographic-img {
+      width: 100%;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      display: block;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      cursor: zoom-in;
+    }
+    .infographic-img:hover {
+      transform: scale(1.015);
+      box-shadow: var(--shadow-md);
+    }
+    .infographic-caption {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Podcast cards ── */
+    .podcast-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 720px) { .podcast-grid { grid-template-columns: 1fr; } }
+    .podcast-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .podcast-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .podcast-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .podcast-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: #1DB954;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .podcast-icon svg { width: 20px; height: 20px; fill: #fff; }
+    .podcast-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #1DB954;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .podcast-card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .podcast-card-body { padding: 0 0 0; }
+    .podcast-card iframe {
+      display: block;
+      border: none;
+      width: 100%;
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    /* ── Featured podcast (full width) ── */
+    .podcast-featured {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .podcast-featured-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.4rem 1.6rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .podcast-featured-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: #1DB954;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .podcast-featured-icon svg { width: 24px; height: 24px; fill: #fff; }
+    .podcast-featured-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #1DB954;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+    .podcast-featured-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.45;
+      margin-bottom: 0.6rem;
+    }
+    .podcast-featured-desc {
+      font-size: 0.855rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .podcast-featured iframe {
+      display: block;
+      border: none;
+      width: 100%;
+    }
+
+    /* ── Intro description ── */
+    .intro-desc {
+      font-size: 0.975rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      max-width: 820px;
+      margin-bottom: 0;
+    }
+
+    /* ── Topic TOC ── */
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+    .toc-item {
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid var(--accent);
+      white-space: nowrap;
+      transition: background 0.2s ease;
+    }
+    .toc-item:hover { background: var(--accent); color: #fff; opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== NAVEGACIÓN ===================== -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html#hero" class="nav-logo" aria-label="Inicio">PG</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks" role="list">
+        <li><a href="index.html#about">Sobre mí</a></li>
+        <li><a href="index.html#education">Educación</a></li>
+        <li><a href="index.html#experience">Experiencia</a></li>
+        <li><a href="index.html#skills">Habilidades</a></li>
+        <li><a href="index.html#publications">Publicaciones</a></li>
+        <li><a href="index.html#courses">Cursos</a></li>
+        <li class="dropdown">
+          <a href="temas.html" class="active">Temas ▾</a>
+          <ul class="dropdown-menu">
+            <li class="dropdown dropdown-nested">
+              <a href="estructura-datos.html">Estructura de Datos ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="recursividad.html">Recursividad</a></li>
+              </ul>
+            </li>
+            <li class="dropdown dropdown-nested">
+              <a href="computacion-grafica.html" class="active">Computación Gráfica ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="computacion-grafica.html">Geometría Aplicada</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="fundamentos.html">Ejercicios</a></li>
+        <li><a href="index.html#contact">Contacto</a></li>
+        <li class="theme-switch-wrapper">
+          <button id="theme-toggle" class="btn-theme" title="Cambiar modo">🌓</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===================== CONTENIDO PRINCIPAL ===================== -->
+  <section class="section">
+    <div class="container">
+
+      <!-- Encabezado -->
+      <div class="breadcrumb">
+        <a href="temas.html">Temas</a>
+        <span>›</span>
+        <span>Computación Gráfica</span>
+        <span>›</span>
+        <span>Geometría Aplicada</span>
+      </div>
+
+      <h1 class="section-title" style="margin-bottom: 1rem;">Geometría Aplicada</h1>
+      <p class="section-subtitle" style="margin-top: 0; margin-bottom: 1.5rem;">Tema 1 — Computación Gráfica</p>
+
+      <p class="intro-desc">
+        La geometría aplicada es el lenguaje matemático detrás de cada píxel en pantalla. En esta sección exploramos
+        cómo las GPUs modernas utilizan álgebra vectorial —normalización, producto interno y producto vectorial— para
+        simular iluminación, gestionar cámaras y optimizar el renderizado mediante técnicas como el Backface Culling.
+        Comprendemos además el paradigma de paralelismo masivo SIMT que impulsa a NVIDIA y AMD, y las APIs de bajo
+        nivel (Vulkan, WebGPU) que dan control directo sobre el hardware gráfico.
+      </p>
+
+      <!-- Índice temático de navegación rápida -->
+      <nav class="toc" aria-label="Contenido de la página">
+        <a href="#simulador" class="toc-item">🎮 Simulador Interactivo</a>
+        <a href="#diapositivas" class="toc-item">📑 Diapositivas</a>
+        <a href="#infografias" class="toc-item">🖼️ Infografías</a>
+        <a href="#podcasts" class="toc-item">🎧 Podcasts</a>
+      </nav>
+
+      <!-- ══════════════════════════════════════════
+           1. SIMULADOR INTERACTIVO
+      ══════════════════════════════════════════ -->
+      <div class="resource-section" id="simulador">
+        <h2 class="resource-section-title">
+          <span class="icon">🎮</span> Simulador Interactivo
+        </h2>
+        <p class="resource-section-subtitle">
+          Visualiza en tiempo real cómo se comportan los vectores, matrices y proyecciones geométricas dentro de un motor gráfico.
+          Alterna entre el modo <strong>ERROR (crudo)</strong> y <strong>CORREGIDO</strong> para entender el impacto de cada operación.
+        </p>
+        <div class="sim-wrapper">
+          <iframe
+            src="computacion-grafica/geometria_aplicada.html"
+            class="sim-iframe"
+            title="Simulador de Geometría Aplicada — Vectorized Worlds"
+            loading="lazy"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           2. DIAPOSITIVAS / DOCUMENTOS
+      ══════════════════════════════════════════ -->
+      <div class="resource-section" id="diapositivas">
+        <h2 class="resource-section-title">
+          <span class="icon">📑</span> Material de Apoyo
+        </h2>
+        <p class="resource-section-subtitle">
+          Documentos técnicos que sustentan los conceptos del simulador, desde la geometría vectorial hasta la arquitectura de GPUs.
+        </p>
+
+        <!-- PDF 1: Vectorized Worlds -->
+        <div class="resource-card">
+          <p class="resource-card-title">
+            📄 Vectorized Worlds — Geometría Vectorial Aplicada
+          </p>
+          <p class="resource-card-desc">
+            Documento base de la clase. Detalla los seis operadores geométricos implementados en el simulador:
+            normalización, producto interno (Lambert shading), producto vectorial, matrices de transformación,
+            proyección de puntos y ray casting para detección de presencia en zonas complejas.
+          </p>
+          <embed
+            src="computacion-grafica/Vectorized_Worlds.pdf"
+            type="application/pdf"
+            class="pdf-embed"
+            title="Vectorized Worlds PDF">
+          <p class="pdf-fallback">
+            <a href="computacion-grafica/Vectorized_Worlds.pdf" target="_blank" rel="noopener">
+              ⬇ Descargar Vectorized_Worlds.pdf si no se visualiza correctamente
+            </a>
+          </p>
+        </div>
+
+        <!-- PDF 2: Mathematics of Rendering -->
+        <div class="resource-card">
+          <p class="resource-card-title">
+            📄 Mathematics of Rendering — Fundamentos Matemáticos del Renderizado
+          </p>
+          <p class="resource-card-desc">
+            Presentación complementaria que cubre la base matemática del pipeline de renderizado: transformaciones
+            afines, cálculo de normales, modelos de iluminación (Phong, PBR) y el flujo completo de un vértice
+            desde la CPU hasta el píxel final en pantalla.
+          </p>
+          <embed
+            src="computacion-grafica/Mathematics_of_Rendering.pdf"
+            type="application/pdf"
+            class="pdf-embed"
+            title="Mathematics of Rendering PDF">
+          <p class="pdf-fallback">
+            <a href="computacion-grafica/Mathematics_of_Rendering.pdf" target="_blank" rel="noopener">
+              ⬇ Descargar Mathematics_of_Rendering.pdf si no se visualiza correctamente
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           3. INFOGRAFÍAS
+      ══════════════════════════════════════════ -->
+      <div class="resource-section" id="infografias">
+        <h2 class="resource-section-title">
+          <span class="icon">🖼️</span> Infografías Resumen
+        </h2>
+        <p class="resource-section-subtitle">
+          Síntesis visual de los conceptos clave. Útiles como guía de referencia rápida durante el estudio y la práctica.
+        </p>
+
+        <div class="infographic-grid">
+          <figure>
+            <img
+              src="computacion-grafica/Infografia_geometria_vectorial.png"
+              alt="Infografía: Geometría Vectorial"
+              class="infographic-img"
+              loading="lazy">
+            <figcaption class="infographic-caption">Geometría Vectorial — Normalización, Producto Interno y Vectorial</figcaption>
+          </figure>
+          <figure>
+            <img
+              src="computacion-grafica/Infografia_geometria_y_graficos.png"
+              alt="Infografía: Geometría y Gráficos por Computadora"
+              class="infographic-img"
+              loading="lazy">
+            <figcaption class="infographic-caption">Geometría y Gráficos — Pipeline GPU y Paralelismo SIMT</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           4. PODCASTS
+      ══════════════════════════════════════════ -->
+      <div class="resource-section" id="podcasts">
+        <h2 class="resource-section-title">
+          <span class="icon">🎧</span> Podcasts Recomendados
+        </h2>
+        <p class="resource-section-subtitle">
+          Episodios de audio para profundizar el tema: arquitectura GPU, programación de gráficos y el rol de la
+          geometría aplicada en los motores de renderizado modernos.
+        </p>
+
+        <!-- Podcast destacado (episodio completo del tema) -->
+        <div class="podcast-featured" style="margin-bottom: 1.5rem;">
+          <div class="podcast-featured-header">
+            <div class="podcast-featured-icon">
+              <!-- Spotify icon -->
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+              </svg>
+            </div>
+            <div style="flex: 1;">
+              <p class="podcast-featured-label">Episodio Principal · Spotify</p>
+              <h3 class="podcast-featured-title">GPU, Gráficos 3D y Geometría Aplicada: Dentro del Silicio</h3>
+              <p class="podcast-featured-desc">
+                Nos sumergimos en los fundamentos técnicos de la programación de gráficos por computadora y la evolución
+                del hardware de tarjetas de video. Exploramos la dualidad NVIDIA vs AMD (CUDA vs Stream Processors) bajo
+                el paradigma <strong>SIMT</strong>. Analizamos niveles de abstracción de software: desde motores de alto
+                nivel (Unreal Engine 5, Unity, Godot) hasta APIs de bajo nivel como <strong>Vulkan</strong> y
+                <strong>WebGPU</strong>. Finalmente aterrizamos la teoría con geometría aplicada: producto interno para
+                iluminación y producto vectorial para <strong>Backface Culling</strong>.
+              </p>
+            </div>
+          </div>
+          <iframe
+            style="border-radius: 0 0 12px 12px;"
+            src="https://open.spotify.com/embed/episode/1B4HX6KTg65OWQ7sjH5sab?utm_source=generator&theme=0"
+            width="100%" height="232"
+            frameborder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy">
+          </iframe>
+        </div>
+
+        <!-- Dos podcasts complementarios en grid -->
+        <div class="podcast-grid">
+
+          <!-- Podcast 2 -->
+          <div class="podcast-card">
+            <div class="podcast-card-header">
+              <div class="podcast-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="podcast-label">Episodio Complementario · Spotify</p>
+                <p class="podcast-card-title">Podcast de apoyo al tema — Episodio 2</p>
+              </div>
+            </div>
+            <div class="podcast-card-body">
+              <iframe
+                style="border-radius: 0 0 12px 12px;"
+                src="https://open.spotify.com/embed/episode/1GJpQAPeG1vrHcPS0GCEJn?utm_source=generator&theme=0"
+                width="100%" height="232"
+                frameborder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+          </div>
+
+          <!-- Podcast 3 -->
+          <div class="podcast-card">
+            <div class="podcast-card-header">
+              <div class="podcast-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="podcast-label">Episodio Complementario · Spotify</p>
+                <p class="podcast-card-title">Podcast de apoyo al tema — Episodio 3</p>
+              </div>
+            </div>
+            <div class="podcast-card-body">
+              <iframe
+                style="border-radius: 0 0 12px 12px;"
+                src="https://open.spotify.com/embed/episode/2ZA1bJkVpw5y6PFJDFatKJ?utm_source=generator&theme=0"
+                width="100%" height="232"
+                frameborder="0"
+                allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy">
+              </iframe>
+            </div>
+          </div>
+
+        </div><!-- /podcast-grid -->
+      </div><!-- /resource-section podcasts -->
+
+    </div><!-- /container -->
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <p class="footer-text">
+        © 2026 Paulo César Galarza Sánchez &nbsp;·&nbsp; Santo Domingo, Ecuador
+      </p>
+      <p class="footer-sub">
+        Mg. Ing. en Sistemas e Informática &nbsp;·&nbsp; 
+        <a href="fundamentos.html" style="color: inherit; text-decoration: underline;">Ejercicios</a> &nbsp;·&nbsp; 
+        <a href="privacidad.html" style="color: inherit; text-decoration: underline;">Política de Privacidad</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
