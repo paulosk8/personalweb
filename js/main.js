@@ -1,4 +1,86 @@
 /* ================================================
+   Navbar Component Rendering
+   ================================================ */
+function renderNavbar() {
+  const placeholder = document.getElementById('navbar-placeholder');
+  if (!placeholder) return;
+
+  const navbarHTML = `
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="index.html#hero" class="nav-logo" aria-label="Inicio">PG</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="navLinks" role="list">
+        <li><a href="index.html#about">Sobre mí</a></li>
+        <li><a href="index.html#education">Educación</a></li>
+        <li><a href="index.html#experience">Experiencia</a></li>
+        <li><a href="index.html#skills">Habilidades</a></li>
+        <li><a href="index.html#publications">Publicaciones</a></li>
+        <li><a href="index.html#courses">Cursos</a></li>
+        <li class="dropdown">
+          <a href="temas.html" id="nav-temas">Temas ▾</a>
+          <ul class="dropdown-menu">
+            <li class="dropdown dropdown-nested">
+              <a href="estructura-datos.html" id="nav-estructura">Estructura de Datos ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="recursividad.html" id="nav-recursividad">Recursividad</a></li>
+              </ul>
+            </li>
+            <li class="dropdown dropdown-nested">
+              <a href="computacion-grafica.html" id="nav-grafica">Computación Gráfica ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="computacion-grafica.html" class="sub-link-grafica">Geometría Aplicada</a></li>
+              </ul>
+            </li>
+            <li class="dropdown dropdown-nested">
+              <a href="computacion-paralela.html" id="nav-paralela">Computación Paralela ▸</a>
+              <ul class="dropdown-menu dropdown-submenu">
+                <li><a href="computacion-paralela.html" class="sub-link-paralela">Algoritmos y Sistemas de Cómputo Paralelo</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="fundamentos.html" id="nav-fundamentos">Ejercicios</a></li>
+        <li><a href="index.html#contact">Contacto</a></li>
+        <li class="theme-switch-wrapper">
+          <button id="theme-toggle" class="btn-theme" title="Cambiar modo">🌓</button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  `;
+
+  placeholder.innerHTML = navbarHTML;
+
+  // Manejo de estado activo según la URL
+  const path = window.location.pathname;
+  
+  const addActive = (id) => {
+    const el = document.getElementById(id) || document.querySelector(id);
+    if (el) el.classList.add('active');
+  };
+
+  if (path.includes('recursividad.html')) {
+    addActive('nav-temas'); addActive('nav-estructura'); addActive('nav-recursividad');
+  } else if (path.includes('estructura-datos.html')) {
+    addActive('nav-temas'); addActive('nav-estructura');
+  } else if (path.includes('computacion-grafica.html')) {
+    addActive('nav-temas'); addActive('nav-grafica'); addActive('.sub-link-grafica');
+  } else if (path.includes('computacion-paralela.html')) {
+    addActive('nav-temas'); addActive('nav-paralela'); addActive('.sub-link-paralela');
+  } else if (path.includes('temas.html')) {
+    addActive('nav-temas');
+  } else if (path.includes('fundamentos.html')) {
+    addActive('nav-fundamentos');
+  }
+}
+
+// Ejecutar inmediatamente para inyectar el HTML antes de que los listeners se vinculen
+renderNavbar();
+
+/* ================================================
    Navbar — shadow on scroll
    ================================================ */
 const navbar = document.getElementById('navbar');
