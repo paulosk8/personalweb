@@ -110,6 +110,9 @@
       gap: 1.25rem;
     }
     @media (max-width: 720px) { .infographic-grid { grid-template-columns: 1fr; } }
+    .infographic-grid .infographic-full {
+      grid-column: 1 / -1;
+    }
     .infographic-img {
       width: 100%;
       border-radius: var(--radius-sm);
@@ -330,7 +333,7 @@
       <!-- Índice temático de navegación rápida -->
       <nav class="toc" aria-label="Contenido de la página">
         <a href="#simulador" class="toc-item">🎮 Simulador Interactivo</a>
-        <a href="#diapositivas" class="toc-item">📑 Diapositivas</a>
+        <a href="#diapositivas" class="toc-item">📑 Material de Apoyo</a>
         <a href="#infografias" class="toc-item">🖼️ Infografías</a>
         <a href="#podcasts" class="toc-item">🎧 Podcasts</a>
       </nav>
@@ -411,6 +414,29 @@
             </a>
           </p>
         </div>
+
+        <!-- PDF 3: Silicon Geometry -->
+        <div class="resource-card">
+          <p class="resource-card-title">
+            📄 Silicon Geometry — Arquitectura de GPU y Detección de Colisiones
+          </p>
+          <p class="resource-card-desc">
+            Documento avanzado que conecta la arquitectura interna del silicio de las GPUs modernas con los algoritmos
+            de detección de colisiones en gráficos por computadora. Aborda cómo las unidades de cómputo paralelo
+            (SIMT/SIMD) aceleran los tests de intersección geométrica (AABB, BVH, ray-triangle) empleados en motores
+            de física y de renderizado en tiempo real.
+          </p>
+          <embed
+            src="computacion-grafica/Silicon_Geometry.pdf"
+            type="application/pdf"
+            class="pdf-embed"
+            title="Silicon Geometry PDF">
+          <p class="pdf-fallback">
+            <a href="computacion-grafica/Silicon_Geometry.pdf" target="_blank" rel="noopener">
+              ⬇ Descargar Silicon_Geometry.pdf si no se visualiza correctamente
+            </a>
+          </p>
+        </div>
       </div>
 
       <!-- ══════════════════════════════════════════
@@ -440,6 +466,14 @@
               class="infographic-img"
               loading="lazy">
             <figcaption class="infographic-caption">Geometría y Gráficos — Pipeline GPU y Paralelismo SIMT</figcaption>
+          </figure>
+          <figure class="infographic-full">
+            <img
+              src="computacion-grafica/Arquitectura_de_GPU_y_Colisiones.png"
+              alt="Infografía: Arquitectura de GPU y Detección de Colisiones"
+              class="infographic-img"
+              loading="lazy">
+            <figcaption class="infographic-caption">Arquitectura de GPU y Detección de Colisiones — Paralelismo SIMT, BVH y tests de intersección geométrica</figcaption>
           </figure>
         </div>
       </div>
