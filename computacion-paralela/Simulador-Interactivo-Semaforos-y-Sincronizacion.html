@@ -28,11 +28,15 @@
       .collision {
         animation: pulse-red 0.3s infinite;
       }
+      .timer-badge {
+        font-family: monospace;
+        font-size: 10px;
+      }
     </style>
   </head>
   <body class="bg-slate-50 p-4 font-sans text-slate-800">
     <div
-      class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-xl border border-slate-200"
+      class="max-w-5xl mx-auto bg-white p-6 rounded-2xl shadow-xl border border-slate-200"
     >
       <div class="flex items-center justify-between mb-6 border-b pb-4">
         <div>
@@ -49,7 +53,7 @@
           >
           <div
             id="semLight"
-            class="w-8 h-8 rounded-full bg-green-500 shadow-lg shadow-green-200"
+            class="w-8 h-8 rounded-full bg-green-500 shadow-lg shadow-green-200 transition-colors duration-300"
           ></div>
         </div>
       </div>
@@ -58,10 +62,14 @@
         <!-- Controles -->
         <div class="space-y-4">
           <div class="bg-slate-100 p-4 rounded-xl border border-slate-200">
-            <h2 class="font-bold text-sm mb-3">Configuración</h2>
+            <h2 class="font-bold text-sm mb-3 text-slate-700">
+              Configuración de Ejecución
+            </h2>
 
             <div class="flex items-center justify-between mb-4">
-              <label class="text-xs font-bold">Usar Semáforo</label>
+              <label class="text-xs font-bold text-slate-600"
+                >Usar Semáforo (Exclusión Mutua)</label
+              >
               <button
                 id="toggleSem"
                 onclick="toggleSemaphore()"
@@ -76,51 +84,102 @@
 
             <button
               onclick="spawnThread()"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-sm mb-2 shadow-md"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-sm mb-2 shadow-md transition-all active:scale-95"
             >
               Lanzar Hilo (Thread)
             </button>
             <button
               onclick="resetSim()"
-              class="w-full text-slate-500 text-xs underline"
+              class="w-full text-slate-500 text-xs font-bold uppercase tracking-widest hover:text-slate-800 transition py-2"
             >
               Reiniciar Sistema
             </button>
           </div>
 
-          <div id="dataCard" class="bg-slate-900 p-4 rounded-xl text-white">
-            <h2 class="text-[10px] font-bold text-slate-400 uppercase mb-1">
+          <div
+            id="dataCard"
+            class="bg-slate-900 p-4 rounded-xl text-white shadow-inner"
+          >
+            <h2
+              class="text-[10px] font-bold text-slate-400 uppercase mb-1 tracking-wider"
+            >
               Recurso Compartido (Saldo)
             </h2>
             <p id="sharedData" class="text-3xl font-mono text-blue-400">$100</p>
-            <p id="errorMsg" class="text-[10px] text-red-400 mt-2 hidden">
-              ¡ERROR: Corrupción de datos detectada!
+            <p
+              id="errorMsg"
+              class="text-[10px] text-red-400 mt-2 hidden animate-pulse font-bold"
+            >
+              ¡ADVERTENCIA: Consistencia de datos comprometida!
             </p>
+          </div>
+
+          <!-- Métricas de Tiempo Real -->
+          <div
+            class="bg-blue-50 p-4 rounded-xl border border-blue-100 shadow-sm"
+          >
+            <h2
+              class="text-[10px] font-bold text-blue-500 uppercase mb-2 tracking-widest"
+            >
+              Métricas de Rendimiento
+            </h2>
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-slate-600 font-medium"
+                >Tiempo Total del Sistema:</span
+              >
+              <span
+                id="totalTimeDisplay"
+                class="font-mono text-sm font-black text-blue-700"
+                >0.00s</span
+              >
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-600 font-medium"
+                >Hilos Finalizados:</span
+              >
+              <span
+                id="completedCount"
+                class="font-mono text-sm font-black text-blue-700"
+                >0</span
+              >
+            </div>
+            <div
+              id="performanceNote"
+              class="mt-2 text-[9px] text-blue-400 italic hidden"
+            >
+              Cronómetro detenido: Sistema en reposo.
+            </div>
           </div>
         </div>
 
         <!-- Área de Simulación Visual -->
         <div
-          class="md:col-span-2 relative h-64 bg-slate-50 rounded-xl border border-slate-200 overflow-hidden"
+          class="md:col-span-2 relative h-[400px] bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden shadow-inner"
         >
           <div
-            class="absolute top-0 left-0 p-2 text-[10px] font-bold text-slate-400 uppercase"
+            class="absolute top-0 left-0 p-3 text-[10px] font-bold text-slate-400 uppercase bg-white/80 rounded-br-xl z-10 border-b border-r border-slate-100 shadow-sm"
           >
-            Cola de Espera
+            Cola de Espera (Wait Queue)
           </div>
           <div
-            class="absolute top-0 right-0 p-2 text-[10px] font-bold text-red-500 uppercase"
+            class="absolute top-0 right-0 p-3 text-[10px] font-bold text-red-500 uppercase bg-white/80 rounded-bl-xl z-10 border-b border-l border-slate-100 shadow-sm"
           >
-            Región Crítica
+            Sección Crítica (Critical Section)
           </div>
 
           <!-- Región Crítica -->
           <div
             id="critZone"
-            class="absolute right-4 top-8 bottom-8 w-32 bg-white rounded-lg flex flex-col items-center justify-center gap-2 critical-section"
+            class="absolute right-6 top-12 bottom-12 w-48 bg-white rounded-2xl flex flex-col items-center justify-center gap-2 critical-section transition-all duration-500"
           >
-            <div id="critLabel" class="text-[9px] font-black text-red-400">
-              DISPONIBLE
+            <div
+              id="critLabel"
+              class="text-[10px] font-black text-red-400 uppercase tracking-widest"
+            >
+              Disponible
+            </div>
+            <div class="text-[8px] text-slate-300 font-bold uppercase">
+              Solo 1 hilo permitido
             </div>
           </div>
 
@@ -129,13 +188,16 @@
         </div>
       </div>
 
-      <!-- Logs de Eventos -->
+      <!-- Consola de Eventos del Kernel -->
       <div
-        class="bg-slate-50 rounded-lg p-3 border border-slate-200 h-32 overflow-y-auto font-mono text-[10px]"
+        class="bg-slate-900 rounded-xl p-4 border border-slate-800 h-44 overflow-y-auto font-mono text-[11px] shadow-2xl"
         id="log"
       >
-        <div class="text-slate-400">
-          > Sistema listo para simular concurrencia...
+        <div class="text-slate-500">
+          > Núcleo de monitoreo inicializado correctamente.
+        </div>
+        <div class="text-blue-400">
+          > Presione "Lanzar Hilo" para iniciar la carga de trabajo.
         </div>
       </div>
     </div>
@@ -144,8 +206,13 @@
       let useSemaphore = false;
       let isLocked = false;
       let sharedValue = 100;
-      let threadCount = 0;
+      let totalCreated = 0;
+      let activeThreadsCount = 0;
+      let finishedThreads = 0;
       let activeInCrit = 0;
+
+      let globalStartTime = null;
+      let timerInterval = null;
 
       function toggleSemaphore() {
         useSemaphore = !useSemaphore;
@@ -157,79 +224,151 @@
         bg.className = useSemaphore
           ? "relative inline-flex h-6 w-11 items-center rounded-full bg-green-500 transition"
           : "relative inline-flex h-6 w-11 items-center rounded-full bg-slate-300 transition";
-        addLog(`Semáforo ${useSemaphore ? "ACTIVADO" : "DESACTIVADO"}`);
+        addLog(
+          `Sincronización ${useSemaphore ? "HABILITADA (Semáforo On)" : "DESHABILITADA (Semáforo Off)"}`,
+        );
+        // No reseteamos todo, solo limpiamos el estado de bloqueo para no interrumpir flujos
+        if (!useSemaphore) {
+          isLocked = false;
+          updateSemLight(true);
+        }
       }
 
-      function addLog(msg) {
+      function addLog(msg, color = "text-slate-300") {
         const log = document.getElementById("log");
-        log.innerHTML += `<div>> ${msg}</div>`;
+        log.innerHTML += `<div class="${color}">> ${msg}</div>`;
         log.scrollTop = log.scrollHeight;
       }
 
+      function startGlobalTimer() {
+        if (!timerInterval) {
+          globalStartTime = performance.now();
+          timerInterval = setInterval(updateGlobalTimer, 50);
+          document.getElementById("performanceNote").classList.add("hidden");
+          addLog(
+            "CRONÓMETRO INICIADO: Detectada nueva carga de trabajo.",
+            "text-blue-500",
+          );
+        }
+      }
+
+      function updateGlobalTimer() {
+        if (globalStartTime) {
+          const elapsed = (performance.now() - globalStartTime) / 1000;
+          document.getElementById("totalTimeDisplay").innerText =
+            elapsed.toFixed(2) + "s";
+        }
+      }
+
       function spawnThread() {
-        threadCount++;
-        const id = "T" + threadCount;
+        startGlobalTimer();
+        totalCreated++;
+        activeThreadsCount++;
+
+        const id = "T" + totalCreated;
         const container = document.getElementById("threadsContainer");
 
         const dot = document.createElement("div");
         dot.id = id;
-        dot.className = `thread absolute left-4 top-${(threadCount % 5) * 10 + 10} w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-[10px] font-bold shadow-md z-10`;
-        dot.innerText = id;
-        dot.style.top = `${Math.random() * 70 + 10}%`;
+        dot.className = `thread absolute left-4 w-12 h-12 rounded-full bg-blue-600 flex flex-col items-center justify-center text-white font-black shadow-xl z-10 border-2 border-white/20`;
+        dot.style.top = `${Math.random() * 65 + 15}%`;
+
+        const nameSpan = document.createElement("span");
+        nameSpan.innerText = id;
+        nameSpan.className = "text-[11px]";
+        dot.appendChild(nameSpan);
+
+        const timerSpan = document.createElement("span");
+        timerSpan.className = "timer-badge text-[9px] opacity-80";
+        timerSpan.innerText = "0.0s";
+        dot.appendChild(timerSpan);
+
         container.appendChild(dot);
 
-        processThread(id);
+        const tStart = performance.now();
+        const threadInterval = setInterval(() => {
+          const element = document.getElementById(id);
+          if (!element) {
+            clearInterval(threadInterval);
+            return;
+          }
+          const tElapsed = (performance.now() - tStart) / 1000;
+          timerSpan.innerText = tElapsed.toFixed(1) + "s";
+        }, 100);
+
+        processThread(id, threadInterval, tStart);
       }
 
-      async function processThread(id) {
+      async function processThread(id, interval, startTime) {
         const dot = document.getElementById(id);
-        addLog(`Hilo ${id} intentando acceder...`);
+        if (!dot) return;
+        addLog(`Hilo ${id} solicita acceso a Sección Crítica.`);
 
-        // Mover a la entrada de la región crítica
-        dot.style.left = "50%";
+        dot.style.left = "40%";
+        // Espera visual para llegar a la cola
         await new Promise((r) => setTimeout(r, 600));
 
+        // Si el semáforo está activo, entrar en espera circular si está bloqueado
         if (useSemaphore) {
-          while (isLocked) {
-            addLog(`Hilo ${id} BLOQUEADO por semáforo.`);
+          while (isLocked && useSemaphore) {
+            if (!document.getElementById(id)) return;
+            addLog(
+              `Hilo ${id} BLOQUEADO. Esperando turno...`,
+              "text-amber-500",
+            );
             await new Promise((r) => setTimeout(r, 500));
           }
-          isLocked = true;
-          updateSemLight(false);
+          // Si al salir del bucle el semáforo sigue activo, bloquearlo para el siguiente
+          if (useSemaphore) {
+            isLocked = true;
+            updateSemLight(false);
+          }
         }
 
-        enterCriticalSection(id);
+        enterCriticalSection(id, interval, startTime);
       }
 
-      async function enterCriticalSection(id) {
+      async function enterCriticalSection(id, interval, startTime) {
         const dot = document.getElementById(id);
+        if (!dot) return;
         const zone = document.getElementById("critZone");
         activeInCrit++;
 
-        // Mover adentro
-        dot.style.left = "calc(100% - 100px)";
-        dot.style.backgroundColor = "#10b981";
+        dot.style.left = "calc(100% - 135px)";
+        dot.style.backgroundColor = "#059669";
 
         if (activeInCrit > 1 && !useSemaphore) {
           zone.classList.add("collision");
           document.getElementById("errorMsg").classList.remove("hidden");
-          addLog(`¡COLISIÓN! Hilo ${id} entró mientras otros operaban.`);
+          addLog(
+            `¡COLISIÓN DETECTADA! Hilo ${id} violó exclusión mutua.`,
+            "text-red-500 font-bold",
+          );
         }
 
         document.getElementById("critLabel").innerText = "OCUPADO";
-        addLog(`Hilo ${id} en Región Crítica - Modificando Saldo...`);
+        addLog(`Hilo ${id} ejecutando operación en Sección Crítica...`);
 
-        // Simular lectura y escritura lenta
-        let temp = sharedValue;
+        let tempValue = sharedValue;
+
+        // Simulación de carga de trabajo
         await new Promise((r) => setTimeout(r, 1000));
-        sharedValue = temp - 10;
+
+        if (!document.getElementById(id)) {
+          activeInCrit--;
+          return;
+        }
+
+        // Actualización de recurso compartido
+        sharedValue = tempValue - 10;
         document.getElementById("sharedData").innerText = `$${sharedValue}`;
 
-        exitCriticalSection(id);
+        exitCriticalSection(id, interval, startTime);
       }
 
-      async function exitCriticalSection(id) {
+      async function exitCriticalSection(id, interval, startTime) {
         const dot = document.getElementById(id);
+        if (!dot) return;
         activeInCrit--;
 
         if (activeInCrit === 0) {
@@ -237,36 +376,87 @@
           document.getElementById("critLabel").innerText = "DISPONIBLE";
         }
 
-        dot.style.left = "110%";
-        addLog(`Hilo ${id} completado y liberado.`);
+        dot.style.left = "130%";
+        dot.style.opacity = "0";
 
-        if (useSemaphore) {
+        clearInterval(interval);
+        const totalDuration = (performance.now() - startTime) / 1000;
+
+        finishedThreads++;
+        activeThreadsCount--;
+        document.getElementById("completedCount").innerText = finishedThreads;
+
+        addLog(
+          `Hilo ${id} terminó exitosamente en ${totalDuration.toFixed(2)}s`,
+          "text-emerald-400",
+        );
+
+        // Siempre liberamos el lock si este proceso lo tenía o si el sistema está en orden
+        if (isLocked) {
           isLocked = false;
           updateSemLight(true);
         }
 
-        setTimeout(() => dot.remove(), 500);
+        checkIfSystemIdle();
+
+        setTimeout(() => {
+          if (dot && dot.parentNode) dot.remove();
+        }, 500);
+      }
+
+      function checkIfSystemIdle() {
+        if (activeThreadsCount === 0 && timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          document.getElementById("performanceNote").classList.remove("hidden");
+          const finalTime =
+            document.getElementById("totalTimeDisplay").innerText;
+          addLog(
+            `SISTEMA IDLE. Tiempo total acumulado: ${finalTime}`,
+            "text-blue-300 font-bold",
+          );
+        }
       }
 
       function updateSemLight(free) {
         const light = document.getElementById("semLight");
-        light.className = free
-          ? "w-8 h-8 rounded-full bg-green-500 shadow-lg shadow-green-200"
-          : "w-8 h-8 rounded-full bg-red-500 shadow-lg shadow-red-200 animate-pulse";
+        if (free) {
+          light.classList.remove(
+            "bg-red-500",
+            "shadow-red-200",
+            "animate-pulse",
+          );
+          light.classList.add("bg-green-500", "shadow-green-200");
+        } else {
+          light.classList.remove("bg-green-500", "shadow-green-200");
+          light.classList.add("bg-red-500", "shadow-red-200", "animate-pulse");
+        }
       }
 
       function resetSim() {
         sharedValue = 100;
-        threadCount = 0;
-        activeInCrit = 0;
+        // No reseteamos totalCreated para evitar colisiones de IDs entre hilos asíncronos
+        activeThreadsCount = 0;
+        finishedThreads = 0;
         isLocked = false;
+        activeInCrit = 0;
+        globalStartTime = null;
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = null;
+
         document.getElementById("sharedData").innerText = `$100`;
+        document.getElementById("totalTimeDisplay").innerText = `0.00s`;
+        document.getElementById("completedCount").innerText = `0`;
         document.getElementById("threadsContainer").innerHTML = "";
         document.getElementById("errorMsg").classList.add("hidden");
         document.getElementById("critZone").classList.remove("collision");
         document.getElementById("critLabel").innerText = "DISPONIBLE";
+        document.getElementById("performanceNote").classList.add("hidden");
         updateSemLight(true);
-        addLog("Sistema Reiniciado.");
+        addLog(
+          "Sistema reiniciado. Memoria limpia y contadores en reposo.",
+          "text-white",
+        );
       }
     </script>
   </body>
